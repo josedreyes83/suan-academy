@@ -7,6 +7,7 @@ import { NavLinks } from "./NavLinks";
 export const NAV = [
   { href: "/admin", label: "Inicio" },
   { href: "/admin/canchas", label: "Canchas" },
+  { href: "/admin/franjas", label: "Franjas horarias" },
   { href: "/admin/niveles", label: "Niveles" },
   { href: "/admin/tipos-alumno", label: "Tipos de alumno" },
   { href: "/admin/precios", label: "Precios" },

@@ -15,17 +15,18 @@ export default async function AdminInicio() {
 
   const pasos = [
     { n: 1, label: "Canchas", href: "/admin/canchas", listo: (canchas.count ?? 0) > 0, detalle: `${canchas.count ?? 0} activas` },
-    { n: 2, label: "Niveles", href: "/admin/niveles", listo: (niveles.count ?? 0) > 0, detalle: `${niveles.count ?? 0} activos` },
-    { n: 3, label: "Entrenadores", href: "/admin/entrenadores", listo: (entrenadores.count ?? 0) > 0, detalle: `${entrenadores.count ?? 0} activos` },
-    { n: 4, label: "Tipos de alumno y precios", href: "/admin/precios", listo: (precios.count ?? 0) >= 6, detalle: `${precios.count ?? 0} precios registrados` },
-    { n: 5, label: "Parámetros", href: "/admin/parametros", listo: true, detalle: "valores iniciales cargados" },
+    { n: 2, label: "Franjas horarias", href: "/admin/franjas", listo: true, detalle: "bloquea horas no disponibles (opcional)" },
+    { n: 3, label: "Niveles", href: "/admin/niveles", listo: (niveles.count ?? 0) > 0, detalle: `${niveles.count ?? 0} activos` },
+    { n: 4, label: "Entrenadores", href: "/admin/entrenadores", listo: (entrenadores.count ?? 0) > 0, detalle: `${entrenadores.count ?? 0} activos` },
+    { n: 5, label: "Tipos de alumno y precios", href: "/admin/precios", listo: (precios.count ?? 0) >= 6, detalle: `${precios.count ?? 0} precios registrados` },
+    { n: 6, label: "Parámetros", href: "/admin/parametros", listo: true, detalle: "valores iniciales cargados" },
   ];
 
   return (
     <>
       <PageHeader
         title="Puesta en marcha"
-        subtitle="Configura la academia en este orden. Cuando los cinco pasos estén listos, sigue la plantilla semanal y el registro de alumnos (próxima entrega)."
+        subtitle="Configura la academia en este orden. Cuando los seis pasos estén listos, sigue la plantilla semanal y el registro de alumnos (próxima entrega)."
       />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {pasos.map((p) => (

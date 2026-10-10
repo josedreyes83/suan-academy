@@ -15,7 +15,7 @@ suan-academy/
 | Esquema: 22 tablas, 8 enumerados, RLS por rol, trigger de vigencia, vistas `v_vigencias` y `v_bloques_cupo` | Aplicado en Supabase |
 | Datos iniciales: 2 tipos de alumno, 5 niveles, 3 productos, 17 parámetros | Cargados |
 | Login por correo y contraseña, redirección por rol, middleware de sesión | Listo |
-| Administrador: Inicio (puesta en marcha), Canchas y horarios, Niveles, Tipos de alumno, Precios, Entrenadores, Parámetros | Listo |
+| Administrador: Inicio (puesta en marcha), Canchas y horarios, Franjas horarias bloqueadas, Niveles, Tipos de alumno, Precios, Entrenadores, Parámetros | Listo |
 | Entrenador / Alumno: páginas de espera | Próxima entrega |
 
 Próximas entregas: plantilla semanal y "Publicar semana", calendario por rol, sección de registro de alumnos por link, bandeja de aprobación, pagos, selección de clase y "Mi clase", asistencia y registro de sesión.
@@ -56,6 +56,7 @@ Cámbiala después del primer ingreso (Supabase → Authentication → Users, o 
 ## Reglas que ya viven en la base de datos
 
 - Un bloque no puede solaparse con otro en la misma cancha ni con otro del mismo entrenador (restricción de exclusión).
+- Un bloque no puede crearse fuera del horario de apertura de la cancha ni sobre una franja bloqueada (`motivo_no_disponible`, migración 0002). `horas_disponibles(cancha, fecha, duración)` devuelve solo los inicios válidos para el selector de horas.
 - Al registrar un pago, la app calcula `vigencia_fin` y `sesiones_totales` según el producto y los parámetros (`vigencia_mensualidad_dias`, `paquete_vigencia_dias`, `paquete_sesiones`).
 - `v_vigencias` devuelve el estado `al_dia`, `por_vencer` o `vencido` de cada pago usando `aviso_por_vencer_dias` y `aviso_por_vencer_sesiones`.
 - El formulario público de registro solo puede insertar alumnos en estado `pendiente` ligados a un link activo y vigente.
