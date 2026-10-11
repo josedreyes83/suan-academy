@@ -17,8 +17,11 @@ function volver(ok?: string, error?: string) {
 export async function crearPlantilla(formData: FormData) {
   await requireRol("administrador");
   const tipo = String(formData.get("tipo") ?? "grupal") === "personalizada" ? "personalizada" : "grupal";
+  const supabase = await createClient();
+  const { data: canchas } = await supabase.from("canchas").select("id, nombre");
+  const nombreCancha = (id: number) => canchas?.find((c) => c.id === id)?.nombre ?? `cancha ${id}`;
   const r = await agregarClasesPlantilla(plantillaRepo(), {
-    canchaId: Number(formData.get("cancha_id")),
+    canchaIds: formData.getAll("canchas").map(Number),
     dias: formData.getAll("dias").map(Number),
     horaInicio: String(formData.get("hora_inicio") ?? ""),
     duracionMin: Number(formData.get("duracion") || 60),
@@ -26,7 +29,7 @@ export async function crearPlantilla(formData: FormData) {
     tipo,
     entrenadorId: String(formData.get("entrenador_id") ?? ""),
     cupo: Number(formData.get("cupo") || (tipo === "grupal" ? 4 : 1)),
-  });
+  }, nombreCancha);
   revalidatePath(RUTA);
   volver(r.ok ? r.mensaje : undefined, r.ok ? undefined : r.mensaje);
 }

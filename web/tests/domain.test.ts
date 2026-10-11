@@ -45,18 +45,21 @@ test("activación: nivel y tipo obligatorios", () => {
 
 test("horarios: una fila por día en orden Lun→Dom", () => {
   assert.equal(sumarMinutos("07:30", 90), "09:00");
-  const clase = { canchaId: 1, dias: [0, 3, 1], horaInicio: "07:00", duracionMin: 60, nivelId: 1, tipo: "grupal" as const, entrenadorId: "e", cupo: 4 };
+  const clase = { canchaIds: [1], dias: [0, 3, 1], horaInicio: "07:00", duracionMin: 60, nivelId: 1, tipo: "grupal" as const, entrenadorId: "e", cupo: 4 };
   assert.equal(validarClasePlantilla(clase), null);
   assert.deepEqual(filasPlantilla(clase).map((f) => f.dia_semana), [1, 3, 0]);
   assert.equal(filasPlantilla(clase)[0].hora_fin, "08:00");
   assert.match(validarClasePlantilla({ ...clase, dias: [] }) ?? "", /al menos un día/);
+  assert.match(validarClasePlantilla({ ...clase, canchaIds: [] }) ?? "", /al menos una cancha/);
+  assert.equal(filasPlantilla({ ...clase, canchaIds: [1, 2] }).length, 6);
   assert.match(validarClasePlantilla({ ...clase, duracionMin: 10 }) ?? "", /duración/);
 });
 
 test("horarios: resumen de creación", () => {
-  assert.equal(resumenCreacion("07:00", [1, 3], []).ok, true);
-  assert.match(resumenCreacion("07:00", [1, 3], []).mensaje, /2 clases agregadas .*Lun, Mié/);
-  assert.equal(resumenCreacion("07:00", [], [{ dia: 2, motivo: "cruce" }]).ok, false);
+  const ok = resumenCreacion("07:00", [{ dia: 1, cancha: "Cancha 1" }, { dia: 3, cancha: "Cancha 1" }], []);
+  assert.equal(ok.ok, true);
+  assert.match(ok.mensaje, /2 clases agregadas .*Lun, Mié · Cancha 1/);
+  assert.equal(resumenCreacion("07:00", [], [{ dia: 2, cancha: "Cancha 1", motivo: "cruce" }]).ok, false);
 });
 
 test("inicio por rol", () => {

@@ -1,28 +1,59 @@
 import { createClient } from "@/infrastructure/supabase/server";
 import { PageHeader, Aviso, Vacio, DIAS } from "@/components/ui";
-import { crearCancha, cambiarEstadoCancha, guardarHorario } from "./actions";
+import { crearCancha, cambiarEstadoCancha, guardarHorario, crearSede, cambiarEstadoSede } from "./actions";
 
 type Horario = { dia_semana: number; hora_inicio: string; hora_fin: string };
-type Cancha = { id: number; nombre: string; activa: boolean; observaciones: string | null; cancha_horarios: Horario[] };
+type Cancha = { id: number; nombre: string; activa: boolean; observaciones: string | null; sede_id: number; cancha_horarios: Horario[] };
+type Sede = { id: number; nombre: string; direccion: string | null; activa: boolean };
 
 export default async function CanchasPage({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string }> }) {
   const { ok, error } = await searchParams;
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("canchas")
-    .select("id, nombre, activa, observaciones, cancha_horarios(dia_semana, hora_inicio, hora_fin)")
-    .order("nombre");
+  const [{ data }, { data: sedesData }] = await Promise.all([
+    supabase.from("canchas").select("id, nombre, activa, observaciones, sede_id, cancha_horarios(dia_semana, hora_inicio, hora_fin)").order("nombre"),
+    supabase.from("sedes").select("id, nombre, direccion, activa").order("nombre"),
+  ]);
   const canchas = (data ?? []) as Cancha[];
+  const sedes = (sedesData ?? []) as Sede[];
 
   return (
     <>
       <PageHeader
-        title="Canchas"
-        subtitle="Registra cada cancha con su horario de apertura por día. Los bloques de clase solo se pueden programar dentro de ese horario."
+        title="Sedes y canchas"
+        subtitle="Cada cancha pertenece a una sede. Registra el horario de apertura por día: las clases solo se pueden programar dentro de ese horario."
       />
       <Aviso ok={ok} error={error} />
 
-      <form action={crearCancha} className="card mb-6 grid gap-3 sm:grid-cols-[1fr_2fr_auto] items-end">
+      {/* Sedes */}
+      <section className="mb-6">
+        <h2 className="text-sm font-bold text-ink mb-2">Sedes</h2>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {sedes.map((s) => (
+            <div key={s.id} className={`card py-2 px-3 flex items-center gap-3 ${s.activa ? "" : "opacity-60"}`}>
+              <div>
+                <div className="font-bold text-ink">{s.nombre}</div>
+                <div className="text-xs text-muted">{s.direccion ?? "Sin dirección"} · {canchas.filter((c) => c.sede_id === s.id).length} canchas</div>
+              </div>
+              <form action={cambiarEstadoSede}>
+                <input type="hidden" name="id" value={s.id} /><input type="hidden" name="activa" value={s.activa ? "false" : "true"} />
+                <button className="text-xs underline text-muted hover:text-ink">{s.activa ? "Inactivar" : "Reactivar"}</button>
+              </form>
+            </div>
+          ))}
+        </div>
+        <form action={crearSede} className="card grid gap-3 sm:grid-cols-[1fr_2fr_auto] items-end">
+          <div><label htmlFor="sede_nombre" className="label">Nueva sede</label><input id="sede_nombre" name="nombre" className="input" placeholder="Calle 100" required /></div>
+          <div><label htmlFor="sede_direccion" className="label">Dirección (opcional)</label><input id="sede_direccion" name="direccion" className="input" placeholder="Calle 100 # 10-20" /></div>
+          <button className="btn-ghost">Agregar sede</button>
+        </form>
+      </section>
+
+      <h2 className="text-sm font-bold text-ink mb-2">Canchas</h2>
+      <form action={crearCancha} className="card mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_2fr_auto] items-end">
+        <div>
+          <label htmlFor="sede_id" className="label">Sede</label>
+          <select id="sede_id" name="sede_id" className="input" required>{sedes.filter((s) => s.activa).map((s) => <option key={s.id} value={s.id}>{s.nombre}</option>)}</select>
+        </div>
         <div>
           <label htmlFor="nombre" className="label">Nombre</label>
           <input id="nombre" name="nombre" className="input" placeholder="Cancha 1" required />
@@ -44,6 +75,7 @@ export default async function CanchasPage({ searchParams }: { searchParams: Prom
               <summary className="flex flex-wrap items-center justify-between gap-2 cursor-pointer list-none">
                 <div className="flex items-center gap-3">
                   <span className="text-lg font-extrabold text-ink">{c.nombre}</span>
+                  <span className="text-xs text-muted">{sedes.find((s) => s.id === c.sede_id)?.nombre ?? ""}</span>
                   <span className={c.activa ? "pill-ok" : "pill-off"}>{c.activa ? "Activa" : "Inactiva"}</span>
                 </div>
                 <span className="text-xs text-muted">

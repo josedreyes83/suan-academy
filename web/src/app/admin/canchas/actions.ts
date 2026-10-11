@@ -17,9 +17,11 @@ export async function crearCancha(formData: FormData) {
   const supabase = await createClient();
   const nombre = String(formData.get("nombre") ?? "").trim();
   const observaciones = String(formData.get("observaciones") ?? "").trim() || null;
+  const sede_id = Number(formData.get("sede_id"));
   if (!nombre) volver(undefined, "El nombre de la cancha es obligatorio.");
+  if (!sede_id) volver(undefined, "Escoge la sede de la cancha.");
 
-  const { data, error } = await supabase.from("canchas").insert({ nombre, observaciones }).select("id").single();
+  const { data, error } = await supabase.from("canchas").insert({ nombre, observaciones, sede_id }).select("id").single();
   if (error) volver(undefined, error.code === "23505" ? "Ya existe una cancha con ese nombre." : error.message);
 
   // Horario de apertura por defecto: lunes a sábado 6:00 a 21:00
@@ -67,4 +69,27 @@ export async function guardarHorario(formData: FormData) {
 
   revalidatePath(RUTA);
   volver("Horario de apertura guardado.");
+}
+
+export async function crearSede(formData: FormData) {
+  await requireRol("administrador");
+  const supabase = await createClient();
+  const nombre = String(formData.get("nombre") ?? "").trim();
+  const direccion = String(formData.get("direccion") ?? "").trim() || null;
+  if (!nombre) volver(undefined, "El nombre de la sede es obligatorio.");
+  const { error } = await supabase.from("sedes").insert({ nombre, direccion });
+  if (error) volver(undefined, error.code === "23505" ? "Ya existe una sede con ese nombre." : error.message);
+  revalidatePath(RUTA); revalidatePath("/admin/horarios");
+  volver(`Sede "${nombre}" creada. Ahora agrega sus canchas.`);
+}
+
+export async function cambiarEstadoSede(formData: FormData) {
+  await requireRol("administrador");
+  const supabase = await createClient();
+  const id = Number(formData.get("id"));
+  const activa = formData.get("activa") === "true";
+  const { error } = await supabase.from("sedes").update({ activa }).eq("id", id);
+  if (error) volver(undefined, error.message);
+  revalidatePath(RUTA); revalidatePath("/admin/horarios");
+  volver(activa ? "Sede reactivada." : "Sede inactivada: no aparece al programar clases (sus canchas conservan su historial).");
 }

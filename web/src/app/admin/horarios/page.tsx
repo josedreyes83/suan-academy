@@ -1,10 +1,11 @@
 import { createClient } from "@/infrastructure/supabase/server";
 import { DiasSelector } from "./DiasSelector";
+import { SedeCanchasSelector } from "./SedeCanchasSelector";
 import { ORDEN_DIAS } from "@/domain/horarios";
 import { PageHeader, Aviso, Vacio, DIAS } from "@/components/ui";
 import { crearPlantilla, cambiarEstadoPlantilla, eliminarPlantilla, publicarSemana, cancelarBloque } from "./actions";
 
-type Cancha = { id: number; nombre: string };
+type Cancha = { id: number; nombre: string; sede_id: number };
 type Nivel = { id: number; nombre: string };
 type Entrenador = { perfil_id: string; activo: boolean; perfiles: { nombres: string; apellidos: string } | null };
 type Plantilla = { id: number; cancha_id: number; dia_semana: number; hora_inicio: string; hora_fin: string; nivel_id: number; tipo: string; entrenador_id: string; cupo: number; activo: boolean };
@@ -29,15 +30,17 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
   const { ok, error } = await searchParams;
   const supabase = await createClient();
   const hoy = new Date().toISOString().slice(0, 10);
-  const [{ data: canchas }, { data: niveles }, { data: ent }, { data: plantilla }, { data: bloques }, { data: params }] = await Promise.all([
-    supabase.from("canchas").select("id, nombre").eq("activa", true).order("nombre"),
+  const [{ data: canchas }, { data: niveles }, { data: ent }, { data: plantilla }, { data: bloques }, { data: params }, { data: sedes }] = await Promise.all([
+    supabase.from("canchas").select("id, nombre, sede_id").eq("activa", true).order("nombre"),
     supabase.from("niveles").select("id, nombre").eq("activo", true).order("orden"),
     supabase.from("entrenadores").select("perfil_id, activo, perfiles(nombres, apellidos)").eq("activo", true),
     supabase.from("plantilla_bloques").select("*").order("dia_semana").order("hora_inicio"),
     supabase.from("v_bloques_cupo").select("*").gte("fecha", hoy).order("fecha").order("hora_inicio"),
     supabase.from("parametros").select("clave, valor").in("clave", ["bloque_duracion_min", "cupo_grupal"]),
+    supabase.from("sedes").select("id, nombre").eq("activa", true).order("nombre"),
   ]);
   const C = (canchas ?? []) as Cancha[];
+  const S = (sedes ?? []) as { id: number; nombre: string }[];
   const N = (niveles ?? []) as Nivel[];
   const E = (ent ?? []) as unknown as Entrenador[];
   const P = (plantilla ?? []) as Plantilla[];
@@ -66,10 +69,7 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
       {/* Crear bloque de plantilla */}
       <form action={crearPlantilla} className="card mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 items-end">
         <div className="lg:col-span-4 text-sm font-bold text-ink">Agregar clase a la plantilla semanal</div>
-        <div>
-          <label className="label" htmlFor="cancha_id">Cancha</label>
-          <select id="cancha_id" name="cancha_id" className="input" required>{C.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}</select>
-        </div>
+        <div className="sm:col-span-2 lg:col-span-4"><SedeCanchasSelector sedes={S} canchas={C} /></div>
         <div className="sm:col-span-2 lg:col-span-4"><DiasSelector /></div>
         <div>
           <label className="label" htmlFor="hora_inicio">Hora de inicio</label>
