@@ -58,7 +58,11 @@ export function FormularioRegistro({ codigo, niveles, nivelFijo }: { codigo: str
           </div>
           <div><label className="label" htmlFor="numero_documento">Número de documento</label><input id="numero_documento" name="numero_documento" className="input" required inputMode="numeric" /></div>
           <div><label className="label" htmlFor="celular">Celular (WhatsApp)</label><input id="celular" name="celular" className="input" required inputMode="tel" placeholder="3001234567" pattern="[0-9+ ]{10,15}" /></div>
-          <div><label className="label" htmlFor="correo">Correo (opcional)</label><input id="correo" name="correo" type="email" className="input" autoComplete="email" /></div>
+          <div>
+            <label className="label" htmlFor="correo">Correo</label>
+            <input id="correo" name="correo" type="email" className="input" autoComplete="email" required placeholder="tu@correo.com" />
+            <p className="text-xs text-muted mt-1">Será tu usuario para entrar a la app.</p>
+          </div>
           <div>
             <label className="label" htmlFor="nivel_id">Nivel</label>
             {nivelFijo ? (

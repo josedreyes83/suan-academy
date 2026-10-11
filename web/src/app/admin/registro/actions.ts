@@ -67,13 +67,16 @@ export async function aprobarAlumno(formData: FormData) {
   const id = String(formData.get("id"));
   const nivel_id = Number(formData.get("nivel_id"));
   const tipo_alumno_id = Number(formData.get("tipo_alumno_id"));
+  if (!nivel_id) volver(undefined, "Escoge el nivel del alumno antes de activarlo.");
+  if (!tipo_alumno_id) volver(undefined, "Escoge el tipo de alumno antes de activarlo.");
 
   const { data: al } = await supabase.from("alumnos").select("id, nombres, apellidos, correo, celular, numero_documento, estado_registro, perfil_id").eq("id", id).single();
   if (!al) volver(undefined, "Registro no encontrado.");
   if (al!.estado_registro !== "pendiente") volver(undefined, "Este registro ya fue procesado.");
 
-  // Usuario del alumno: correo propio o uno interno a partir del documento
-  const correo = al!.correo?.trim().toLowerCase() || `${al!.numero_documento}@alumnos.suanacademy.co`;
+  // Usuario del alumno: su correo (obligatorio en el registro)
+  const correo = (al!.correo ?? "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) volver(undefined, `${al!.nombres} ${al!.apellidos} no tiene un correo válido; corrígelo antes de activar (el correo es el usuario de acceso).`);
   const clave = claveDesdeDocumento(al!.numero_documento);
   let perfilId: string | null = null;
   const { data: creado, error: eUser } = await admin!.auth.admin.createUser({

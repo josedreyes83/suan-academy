@@ -67,7 +67,7 @@ Cámbiala después del primer ingreso (Supabase → Authentication → Users, o 
 
 1. El alumno se registra en `/registro` (o `/registro/<codigo>`); queda **pendiente de aprobación**.
 2. En **Admin → Registro de alumnos** el administrador escoge nivel y **tipo de alumno** y pulsa **Activar**:
-   - usuario = correo del alumno (o `<documento>@alumnos.suanacademy.co` si no dejó correo)
+   - usuario = correo del alumno (obligatorio en el registro)
    - clave = **número de documento** (si tiene menos de 6 dígitos se completa con ceros a la izquierda)
 3. El alumno entra en `/login` y cae en `/alumno` (**Mis clases**: reservas y vigencia) y `/alumno/clases` (**Escoger clase**: clases publicadas de su nivel, próximos 14 días).
 4. Para que haya clases: **Admin → Horarios** → arma la plantilla semanal → **Publicar semana** (lunes). `publicar_semana` omite bloques en franjas bloqueadas y no duplica.

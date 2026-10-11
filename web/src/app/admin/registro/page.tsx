@@ -41,7 +41,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
     <>
       <PageHeader
         title="Registro de alumnos"
-        subtitle="Habilita la sección de registro, comparte el link y activa los registros pendientes. Al activar, escoges el tipo de alumno y la app crea su cuenta: usuario = su correo (o documento@alumnos.suanacademy.co) y clave = su número de documento."
+        subtitle="Habilita la sección de registro, comparte el link y activa los registros pendientes. Al activar debes escoger nivel y tipo de alumno; la app crea su cuenta: usuario = su correo y clave = su número de documento."
       />
       <Aviso ok={ok} error={error} />
 
@@ -141,8 +141,21 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
                   <div className="grid gap-3">
                     <form action={aprobarAlumno} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] items-end">
                       <input type="hidden" name="id" value={a.id} />
-                      <div><label className="label">Nivel</label><select name="nivel_id" className="input" defaultValue={a.nivel_id ?? ""} required>{N.map((n) => <option key={n.id} value={n.id}>{n.nombre}</option>)}</select></div>
-                      <div><label className="label">Tipo de alumno</label><select name="tipo_alumno_id" className="input" defaultValue={T.find((t) => t.codigo === "normal")?.id}>{T.map((t) => <option key={t.id} value={t.id}>{t.nombre}</option>)}</select></div>
+                      <div>
+                        <label className="label">Nivel <span className="text-danger">*</span></label>
+                        <select name="nivel_id" className="input" defaultValue={a.nivel_id ?? ""} required>
+                          <option value="" disabled>Escoge el nivel</option>
+                          {N.map((n) => <option key={n.id} value={n.id}>{n.nombre}</option>)}
+                        </select>
+                        {a.nivel_id && <p className="text-xs text-muted mt-1">El alumno escogió {nombreNivel(a.nivel_id)}; confírmalo o cámbialo.</p>}
+                      </div>
+                      <div>
+                        <label className="label">Tipo de alumno <span className="text-danger">*</span></label>
+                        <select name="tipo_alumno_id" className="input" defaultValue="" required>
+                          <option value="" disabled>Escoge el tipo</option>
+                          {T.map((t) => <option key={t.id} value={t.id}>{t.nombre}</option>)}
+                        </select>
+                      </div>
                       <button className="btn-primary" disabled={sinClave}>Activar</button>
                     </form>
                     <form action={rechazarAlumno} className="grid gap-3 sm:grid-cols-[1fr_auto] items-end">
