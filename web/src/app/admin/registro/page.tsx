@@ -122,7 +122,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
                     {a.nivel_id && <span className="pill-off">Sugerido: {nombreNivel(a.nivel_id)}</span>}
                     <span className="pill-off">{origen(a.link_id)}</span>
                     <span className="pill bg-lime/30 text-ink">Pendiente de aprobación</span>
-                    {a.parq_alerta ? <span className="pill bg-danger/15 text-danger">PAR-Q: {siSi.length} sí</span> : <span className="pill-ok">PAR-Q sin alertas</span>}
+                    {a.parq_alerta ? <span className="pill bg-danger/15 text-danger">Salud: {siSi.length} sí</span> : <span className="pill-ok">Salud sin alertas</span>}
                   </div>
                 </summary>
                 <div className="mt-4 grid gap-4 lg:grid-cols-2">

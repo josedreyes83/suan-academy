@@ -93,7 +93,7 @@ export function FormularioRegistro({ codigo }: { codigo: string }) {
 
       {/* 3. PAR-Q */}
       <section className="card">
-        <h2 className="text-lg font-extrabold text-ink mb-1">{esMenor ? "3" : "2"}. Cuestionario de aptitud para la actividad física (PAR-Q)</h2>
+        <h2 className="text-lg font-extrabold text-ink mb-1">{esMenor ? "3" : "2"}. Cuestionario de salud</h2>
         <p className="text-sm text-muted mb-4">Responde con sinceridad; sirve para cuidar tu salud durante el entrenamiento. Si marcas «Sí» en alguna, el entrenador lo tendrá en cuenta y podrá pedir una valoración médica.</p>
         <ol className="space-y-4">
           {PARQ.map((p, i) => (
