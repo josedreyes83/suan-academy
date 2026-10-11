@@ -62,3 +62,13 @@ Cámbiala después del primer ingreso (Supabase → Authentication → Users, o 
 - Al registrar un pago, la app calcula `vigencia_fin` y `sesiones_totales` según el producto y los parámetros (`vigencia_mensualidad_dias`, `paquete_vigencia_dias`, `paquete_sesiones`).
 - `v_vigencias` devuelve el estado `al_dia`, `por_vencer` o `vencido` de cada pago usando `aviso_por_vencer_dias` y `aviso_por_vencer_sesiones`.
 - El registro público pasa por `registro_publico(...)` (migración 0003): exige `registro_habilitado = true`, link activo y vigente, documento único, acudiente si es menor de 18 y autorización de datos; guarda el PAR-Q y marca `parq_alerta` si hay algún Sí.
+
+## Flujo del alumno (entrega 3)
+
+1. El alumno se registra en `/registro` (o `/registro/<codigo>`); queda **pendiente de aprobación**.
+2. En **Admin → Registro de alumnos** el administrador escoge nivel y **tipo de alumno** y pulsa **Activar**:
+   - usuario = correo del alumno (o `<documento>@alumnos.suanacademy.co` si no dejó correo)
+   - clave = **número de documento** (si tiene menos de 6 dígitos se completa con ceros a la izquierda)
+3. El alumno entra en `/login` y cae en `/alumno` (**Mis clases**: reservas y vigencia) y `/alumno/clases` (**Escoger clase**: clases publicadas de su nivel, próximos 14 días).
+4. Para que haya clases: **Admin → Horarios** → arma la plantilla semanal → **Publicar semana** (lunes). `publicar_semana` omite bloques en franjas bloqueadas y no duplica.
+5. Reglas de `inscribir`: nivel igual, cupo, clase futura, tope grupal semanal (`tope_grupales_semana`), y vigencia solo si `requiere_pago_para_inscribir=true` (por defecto `false` hasta que exista la UI de pagos). Cancelar con ≥ `cancelacion_horas` devuelve la sesión del paquete.
