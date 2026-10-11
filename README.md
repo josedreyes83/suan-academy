@@ -16,9 +16,11 @@ suan-academy/
 | Datos iniciales: 2 tipos de alumno, 5 niveles, 3 productos, 17 parámetros | Cargados |
 | Login por correo y contraseña, redirección por rol, middleware de sesión | Listo |
 | Administrador: Inicio (puesta en marcha), Canchas y horarios, Franjas horarias bloqueadas, Niveles, Tipos de alumno, Precios, Entrenadores, Parámetros | Listo |
+| Registro público de alumnos (`/registro` y `/registro/<código>`): datos, acudiente si es menor, PAR-Q (7 preguntas), autorización de datos (Ley 1581 de 2012) | Listo |
+| Administrador → Registro de alumnos: habilitar/deshabilitar, links por campaña o nivel, bandeja de pendientes con aprobación (crea la cuenta) o rechazo | Listo |
 | Entrenador / Alumno: páginas de espera | Próxima entrega |
 
-Próximas entregas: plantilla semanal y "Publicar semana", calendario por rol, sección de registro de alumnos por link, bandeja de aprobación, pagos, selección de clase y "Mi clase", asistencia y registro de sesión.
+Próximas entregas: plantilla semanal y "Publicar semana", calendario por rol, pagos, selección de clase y "Mi clase", asistencia y registro de sesión.
 
 ## Arranque local
 
@@ -59,4 +61,4 @@ Cámbiala después del primer ingreso (Supabase → Authentication → Users, o 
 - Un bloque no puede crearse fuera del horario de apertura de la cancha ni sobre una franja bloqueada (`motivo_no_disponible`, migración 0002). `horas_disponibles(cancha, fecha, duración)` devuelve solo los inicios válidos para el selector de horas.
 - Al registrar un pago, la app calcula `vigencia_fin` y `sesiones_totales` según el producto y los parámetros (`vigencia_mensualidad_dias`, `paquete_vigencia_dias`, `paquete_sesiones`).
 - `v_vigencias` devuelve el estado `al_dia`, `por_vencer` o `vencido` de cada pago usando `aviso_por_vencer_dias` y `aviso_por_vencer_sesiones`.
-- El formulario público de registro solo puede insertar alumnos en estado `pendiente` ligados a un link activo y vigente.
+- El registro público pasa por `registro_publico(...)` (migración 0003): exige `registro_habilitado = true`, link activo y vigente, documento único, acudiente si es menor de 18 y autorización de datos; guarda el PAR-Q y marca `parq_alerta` si hay algún Sí.

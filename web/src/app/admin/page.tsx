@@ -26,7 +26,7 @@ export default async function AdminInicio() {
     <>
       <PageHeader
         title="Puesta en marcha"
-        subtitle="Configura la academia en este orden. Cuando los seis pasos estén listos, sigue la plantilla semanal y el registro de alumnos (próxima entrega)."
+        subtitle="Configura la academia en este orden. Cuando los seis pasos estén listos, comparte el link de registro de alumnos; la plantilla semanal llega en la próxima entrega."
       />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {pasos.map((p) => (
@@ -39,11 +39,11 @@ export default async function AdminInicio() {
             <div className="text-sm text-muted">{p.detalle}</div>
           </Link>
         ))}
-        <div className="card bg-ink text-white border-ink">
-          <span className="text-xs font-bold tracking-widest text-neutral-400">ALUMNOS</span>
+        <Link href="/admin/registro" className="card bg-ink text-white border-ink hover:border-lime transition-colors">
+          <span className="text-xs font-bold tracking-widest text-teal">REGISTRO DE ALUMNOS</span>
           <div className="text-lg font-extrabold mt-2">{alumnosOk.count ?? 0} aprobados</div>
           <div className="text-sm text-neutral-300">{alumnosPend.count ?? 0} registros pendientes de aprobación</div>
-        </div>
+        </Link>
       </div>
     </>
   );
