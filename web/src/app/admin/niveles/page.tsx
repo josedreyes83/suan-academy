@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/infrastructure/supabase/server";
 import { PageHeader, Aviso, Vacio } from "@/components/ui";
 import { crearNivel, actualizarNivel, cambiarEstadoNivel } from "./actions";
 

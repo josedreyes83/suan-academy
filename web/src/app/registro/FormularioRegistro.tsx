@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { enviarRegistro } from "./actions";
-import { PARQ, TIPOS_DOCUMENTO, PARENTESCOS, AUTORIZACION_DATOS } from "@/lib/registro";
+import { PARQ, TIPOS_DOCUMENTO, PARENTESCOS, AUTORIZACION_DATOS } from "@/domain/registro";
 
 function edadDe(fecha: string) {
   if (!fecha) return null;

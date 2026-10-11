@@ -1,16 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { estadoLinkRegistro } from "@/application/registro";
+import { registroRepo } from "@/infrastructure/supabase/repos";
 import { LogoFull } from "@/components/Logo";
 import { FormularioRegistro } from "./FormularioRegistro";
 
 /** Página de registro público, compartida por /registro y /registro/[codigo]. */
 export async function RegistroPage({ codigo }: { codigo: string }) {
-  const supabase = await createClient();
-  const [{ data: param }, { data: link }] = await Promise.all([
-    supabase.from("parametros").select("valor").eq("clave", "registro_habilitado").maybeSingle(),
-    supabase.from("links_registro").select("id, nombre_origen, activo, vence_en").eq("codigo", codigo).maybeSingle(),
-  ]);
-  const habilitado = param?.valor === "true";
-  const linkValido = !!link && link.activo && (!link.vence_en || link.vence_en >= new Date().toISOString().slice(0, 10));
+  const { registroHabilitado: habilitado, valido: linkValido } = await estadoLinkRegistro(registroRepo(), codigo);
 
   return (
     <main className="min-h-dvh">

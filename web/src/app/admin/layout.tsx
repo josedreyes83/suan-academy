@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { requireRol } from "@/lib/auth";
+import { requireRol } from "@/infrastructure/sesion";
 import { LogoFull } from "@/components/Logo";
 import { cerrarSesion } from "./actions";
 import { NavLinks } from "./NavLinks";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { temaActual } from "@/lib/tema";
+import { temaActual } from "@/infrastructure/tema";
 
 export const NAV = [
   { href: "/admin", label: "Inicio" },

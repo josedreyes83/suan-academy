@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/infrastructure/supabase/server";
 import { PageHeader, Aviso, Vacio } from "@/components/ui";
-import { PARQ } from "@/lib/registro";
+import { PARQ } from "@/domain/registro";
 import { cambiarRegistroHabilitado, crearLink, cambiarEstadoLink, aprobarAlumno, rechazarAlumno } from "./actions";
 import { CopiarLink } from "./CopiarLink";
 

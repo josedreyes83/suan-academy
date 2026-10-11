@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { requireRol } from "@/lib/auth";
+import { createClient } from "@/infrastructure/supabase/server";
+import { requireRol } from "@/infrastructure/sesion";
 
 const RUTA = "/admin/canchas";
 

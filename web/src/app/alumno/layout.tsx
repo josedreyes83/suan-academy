@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getSesion, inicioPorRol } from "@/lib/auth";
+import { getSesion, inicioPorRol } from "@/infrastructure/sesion";
 import { LogoFull } from "@/components/Logo";
 import { cerrarSesion } from "../admin/actions";
 import { NavLinks } from "../admin/NavLinks";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { temaActual } from "@/lib/tema";
+import { temaActual } from "@/infrastructure/tema";
 
 const NAV = [
   { href: "/alumno", label: "Mis clases" },

@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { requireRol } from "@/lib/auth";
+import { createClient } from "@/infrastructure/supabase/server";
+import { requireRol } from "@/infrastructure/sesion";
+import { agregarClasesPlantilla } from "@/application/horarios";
+import { plantillaRepo } from "@/infrastructure/supabase/repos";
 
 const RUTA = "/admin/horarios";
 function volver(ok?: string, error?: string) {
@@ -11,50 +13,22 @@ function volver(ok?: string, error?: string) {
   redirect(RUTA + q);
 }
 
-function sumarMinutos(hora: string, min: number) {
-  const [h, m] = hora.split(":").map(Number);
-  const total = h * 60 + m + min;
-  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
-}
-
-/** Crea un bloque de la plantilla semanal (se repite cada semana al publicar). */
+/** Agrega una clase a la plantilla semanal en uno o varios días (se repite cada semana al publicar). */
 export async function crearPlantilla(formData: FormData) {
   await requireRol("administrador");
-  const supabase = await createClient();
-  const cancha_id = Number(formData.get("cancha_id"));
-  const dias = formData.getAll("dias").map(Number).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
-  const hora_inicio = String(formData.get("hora_inicio") ?? "");
-  const duracion = Number(formData.get("duracion") || 60);
-  const nivel_id = Number(formData.get("nivel_id"));
-  const tipo = String(formData.get("tipo") ?? "grupal");
-  const entrenador_id = String(formData.get("entrenador_id") ?? "");
-  const cupo = Number(formData.get("cupo") || (tipo === "grupal" ? 4 : 1));
-
-  if (!cancha_id || !nivel_id || !entrenador_id || !hora_inicio) volver(undefined, "Completa cancha, hora, nivel y entrenador.");
-  if (dias.length === 0) volver(undefined, "Marca al menos un día de la semana.");
-  if (duracion < 30 || duracion > 240) volver(undefined, "La duración debe estar entre 30 y 240 minutos.");
-  const hora_fin = sumarMinutos(hora_inicio, duracion);
-
-  // Una fila de plantilla por cada día marcado; los cruces se informan por día sin bloquear los demás
-  const ORDEN = [1, 2, 3, 4, 5, 6, 0];
-  const NOMBRE = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-  const creados: string[] = [];
-  const fallos: string[] = [];
-  for (const dia_semana of ORDEN.filter((d) => dias.includes(d))) {
-    const { error } = await supabase.from("plantilla_bloques").insert({ cancha_id, dia_semana, hora_inicio, hora_fin, nivel_id, tipo, entrenador_id, cupo, activo: true });
-    if (error) {
-      fallos.push(`${NOMBRE[dia_semana]}: ${error.code === "23P01" ? "se cruza con otra clase de la misma cancha o del mismo entrenador" : error.message}`);
-    } else {
-      creados.push(NOMBRE[dia_semana]);
-    }
-  }
+  const tipo = String(formData.get("tipo") ?? "grupal") === "personalizada" ? "personalizada" : "grupal";
+  const r = await agregarClasesPlantilla(plantillaRepo(), {
+    canchaId: Number(formData.get("cancha_id")),
+    dias: formData.getAll("dias").map(Number),
+    horaInicio: String(formData.get("hora_inicio") ?? ""),
+    duracionMin: Number(formData.get("duracion") || 60),
+    nivelId: Number(formData.get("nivel_id")),
+    tipo,
+    entrenadorId: String(formData.get("entrenador_id") ?? ""),
+    cupo: Number(formData.get("cupo") || (tipo === "grupal" ? 4 : 1)),
+  });
   revalidatePath(RUTA);
-  const resumen = creados.length
-    ? `${creados.length} ${creados.length === 1 ? "clase agregada" : "clases agregadas"} a la plantilla (${creados.join(", ")}) a las ${hora_inicio}.`
-    : "No se agregó ninguna clase.";
-  if (fallos.length && !creados.length) volver(undefined, `${resumen} ${fallos.join(" · ")}`);
-  if (fallos.length) volver(`${resumen} No se pudieron crear → ${fallos.join(" · ")}`);
-  volver(`${resumen} Recuerda publicar la semana para que los alumnos las vean.`);
+  volver(r.ok ? r.mensaje : undefined, r.ok ? undefined : r.mensaje);
 }
 
 export async function cambiarEstadoPlantilla(formData: FormData) {

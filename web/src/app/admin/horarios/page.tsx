@@ -1,5 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/infrastructure/supabase/server";
 import { DiasSelector } from "./DiasSelector";
+import { ORDEN_DIAS } from "@/domain/horarios";
 import { PageHeader, Aviso, Vacio, DIAS } from "@/components/ui";
 import { crearPlantilla, cambiarEstadoPlantilla, eliminarPlantilla, publicarSemana, cancelarBloque } from "./actions";
 
@@ -10,7 +11,6 @@ type Plantilla = { id: number; cancha_id: number; dia_semana: number; hora_inici
 type Bloque = { id: string; fecha: string; cancha_id: number; hora_inicio: string; hora_fin: string; nivel_id: number; tipo: string; entrenador_id: string; cupo: number; estado: string; inscritos: number; motivo_cancelacion: string | null };
 
 const h = (t: string) => t.slice(0, 5);
-const ORDEN_DIAS = [1, 2, 3, 4, 5, 6, 0];
 
 function proximoLunes(desde = new Date()) {
   const d = new Date(desde); d.setHours(0, 0, 0, 0);

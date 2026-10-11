@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/infrastructure/supabase/server";
 import { Aviso, Vacio } from "@/components/ui";
 import { alumnoActual, catalogos, h, fechaLarga, hoyISO, type Bloque } from "../lib";
 import { reservarClase } from "../actions";

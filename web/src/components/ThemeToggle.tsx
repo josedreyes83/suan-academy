@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-export type Tema = "oscuro" | "claro";
-const COOKIE = "suan_tema";
+import { TEMA_COOKIE as COOKIE, type Tema } from "@/domain/tema";
+export type { Tema };
 
 function aplicar(t: Tema) {
   document.documentElement.dataset.theme = t;

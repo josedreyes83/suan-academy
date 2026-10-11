@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ENTRE_SEMANA } from "@/domain/horarios";
 
 /** Lunes → Domingo (dia_semana: 0 = domingo … 6 = sábado, como en la base). */
 const DIAS = [
@@ -12,7 +13,6 @@ const DIAS = [
   { v: 6, corto: "Sáb", largo: "Sábado" },
   { v: 0, corto: "Dom", largo: "Domingo" },
 ];
-const ENTRE_SEMANA = [1, 2, 3, 4, 5];
 
 /** Selector de varios días: chips que son checkboxes reales (name="dias"). */
 export function DiasSelector({ inicial = [1] }: { inicial?: number[] }) {

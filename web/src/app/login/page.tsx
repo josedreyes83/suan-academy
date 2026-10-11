@@ -1,7 +1,7 @@
 import { LogoFull } from "@/components/Logo";
 import { LoginForm } from "./LoginForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { temaActual } from "@/lib/tema";
+import { temaActual } from "@/infrastructure/tema";
 
 export default async function LoginPage({
   searchParams,

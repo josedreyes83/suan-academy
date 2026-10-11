@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/infrastructure/supabase/server";
 import { PageHeader, Aviso, Vacio, DIAS } from "@/components/ui";
 import { crearFranja, cambiarEstadoFranja, eliminarFranja } from "./actions";
 import { TipoFranja } from "./TipoFranja";

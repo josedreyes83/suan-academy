@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/infrastructure/supabase/server";
 import { PageHeader, Aviso, DIAS } from "@/components/ui";
 import { guardarParametros } from "./actions";
 

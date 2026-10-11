@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { requireRol } from "@/lib/auth";
+import { createClient, createAdminClient } from "@/infrastructure/supabase/server";
+import { requireRol } from "@/infrastructure/sesion";
 
 const RUTA = "/admin/entrenadores";
 function volver(ok?: string, error?: string) {

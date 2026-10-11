@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { requireRol } from "@/lib/auth";
+import { createClient } from "@/infrastructure/supabase/server";
+import { activarAlumno } from "@/application/alumnos";
+import { alumnosRepo } from "@/infrastructure/supabase/repos";
+import { requireRol } from "@/infrastructure/sesion";
 
 const RUTA = "/admin/registro";
 function volver(ok?: string, error?: string) {
@@ -52,59 +54,17 @@ export async function cambiarEstadoLink(formData: FormData) {
   volver(activo ? "Link reactivado." : "Link pausado.");
 }
 
-/** Clave inicial del alumno: su número de documento (Supabase exige mínimo 6 caracteres; si es más corto se completa con ceros a la izquierda). */
-function claveDesdeDocumento(doc: string) {
-  const limpio = doc.replace(/\s+/g, "");
-  return limpio.length >= 6 ? limpio : limpio.padStart(6, "0");
-}
-
 export async function aprobarAlumno(formData: FormData) {
   const sesion = await requireRol("administrador");
-  const supabase = await createClient();
-  const admin = createAdminClient();
-  if (!admin) volver(undefined, "Falta SUPABASE_SERVICE_ROLE_KEY en el servidor; sin ella no se pueden crear las cuentas de los alumnos.");
-
-  const id = String(formData.get("id"));
-  const nivel_id = Number(formData.get("nivel_id"));
-  const tipo_alumno_id = Number(formData.get("tipo_alumno_id"));
-  if (!nivel_id) volver(undefined, "Escoge el nivel del alumno antes de activarlo.");
-  if (!tipo_alumno_id) volver(undefined, "Escoge el tipo de alumno antes de activarlo.");
-
-  const { data: al } = await supabase.from("alumnos").select("id, nombres, apellidos, correo, celular, numero_documento, estado_registro, perfil_id").eq("id", id).single();
-  if (!al) volver(undefined, "Registro no encontrado.");
-  if (al!.estado_registro !== "pendiente") volver(undefined, "Este registro ya fue procesado.");
-
-  // Usuario del alumno: su correo (obligatorio en el registro)
-  const correo = (al!.correo ?? "").trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) volver(undefined, `${al!.nombres} ${al!.apellidos} no tiene un correo válido; corrígelo antes de activar (el correo es el usuario de acceso).`);
-  const clave = claveDesdeDocumento(al!.numero_documento);
-  let perfilId: string | null = null;
-  const { data: creado, error: eUser } = await admin!.auth.admin.createUser({
-    email: correo, password: clave, email_confirm: true,
-    user_metadata: { nombres: al!.nombres, apellidos: al!.apellidos, celular: al!.celular },
-  });
-  if (creado?.user) {
-    perfilId = creado.user.id;
-  } else if (eUser && /already|registered|exists/i.test(eUser.message)) {
-    // Ya existe una cuenta con ese correo (p. ej. un acudiente o un registro anterior): se reutiliza y se fija la clave con el documento.
-    const { data: existente } = await admin!.from("perfiles").select("id").eq("correo", correo).maybeSingle();
-    if (!existente) { volver(undefined, `Ya existe una cuenta con el correo ${correo}, pero no se encontró su perfil. Revisa en Supabase → Authentication.`); return; }
-    perfilId = existente.id as string;
-    const { error: ePass } = await admin!.auth.admin.updateUserById(existente.id as string, { password: clave });
-    if (ePass) { volver(undefined, `No se pudo fijar la clave: ${ePass.message}`); return; }
-  } else {
-    volver(undefined, `No se pudo crear la cuenta: ${eUser?.message ?? "error desconocido"}`); return;
-  }
-
-  await admin!.from("perfiles").upsert({ id: perfilId, nombres: al!.nombres, apellidos: al!.apellidos, correo, celular: al!.celular });
-  await admin!.from("usuario_roles").upsert({ perfil_id: perfilId, rol: "alumno" });
-  const { error: eAl } = await admin!.from("alumnos").update({
-    perfil_id: perfilId, nivel_id, tipo_alumno_id, estado_registro: "aprobado", aprobado_en: new Date().toISOString(), aprobado_por: sesion.userId,
-  }).eq("id", id);
-  if (eAl) volver(undefined, eAl.message);
-
+  const r = await activarAlumno(alumnosRepo(), {
+    alumnoId: String(formData.get("id") ?? ""),
+    nivelId: Number(formData.get("nivel_id")),
+    tipoAlumnoId: Number(formData.get("tipo_alumno_id")),
+  }, sesion.userId);
+  if (!r.ok) { volver(undefined, r.error); return; }
+  const a = r.valor;
   revalidatePath(RUTA); revalidatePath("/admin");
-  volver(`${al!.nombres} ${al!.apellidos} activado. Acceso: usuario ${correo} · clave ${clave} (su número de documento). Compártelo por WhatsApp al ${al!.celular}; al entrar verá las clases de su nivel.`);
+  volver(`${a.nombre} activado. Acceso: usuario ${a.correo} · clave ${a.clave} (su número de documento). Compártelo por WhatsApp al ${a.celular}; al entrar verá las clases de su nivel.`);
 }
 
 export async function rechazarAlumno(formData: FormData) {

@@ -1,4 +1,4 @@
-import { requireRol } from "@/lib/auth";
+import { requireRol } from "@/infrastructure/sesion";
 import { cerrarSesion } from "../admin/actions";
 
 export default async function Page() {

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/infrastructure/supabase/server";
 
 export type Alumno = { id: string; nombres: string; nivel_id: number | null; tipo_alumno_id: number | null; estado_registro: string; niveles: { nombre: string } | null };
 export type Vigencia = { pago_id: string; clase: string; tipo_producto: string; vigencia_inicio: string; vigencia_fin: string; sesiones_totales: number | null; sesiones_usadas: number; estado: string };

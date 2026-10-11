@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { temaActual } from "@/lib/tema";
+import { temaActual } from "@/infrastructure/tema";
 
 export const metadata: Metadata = {
   title: "SUAN Academy",

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSesion, inicioPorRol } from "@/lib/auth";
+import { getSesion, inicioPorRol } from "@/infrastructure/sesion";
 
 export default async function Home() {
   const sesion = await getSesion();

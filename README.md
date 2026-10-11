@@ -72,3 +72,7 @@ Cámbiala después del primer ingreso (Supabase → Authentication → Users, o 
 3. El alumno entra en `/login` y cae en `/alumno` (**Mis clases**: reservas y vigencia) y `/alumno/clases` (**Escoger clase**: clases publicadas de su nivel, próximos 14 días).
 4. Para que haya clases: **Admin → Horarios** → arma la plantilla semanal → **Publicar semana** (lunes). `publicar_semana` omite bloques en franjas bloqueadas y no duplica.
 5. Reglas de `inscribir`: nivel igual, cupo, clase futura, tope grupal semanal (`tope_grupales_semana`), y vigencia solo si `requiere_pago_para_inscribir=true` (por defecto `false` hasta que exista la UI de pagos). Cancelar con ≥ `cancelacion_horas` devuelve la sesión del paquete.
+
+## Arquitectura y seguridad
+
+Ver [ARCHITECTURE.md](ARCHITECTURE.md): capas `domain / application / infrastructure / app`, reglas de trabajo y modelo de seguridad de links y datos. La migración `supabase/migrations/0007_endurecer_acceso_publico.sql` cierra el acceso anónimo a tablas y debe estar aplicada en producción.
