@@ -57,6 +57,16 @@ html, body { height: 100%; -webkit-text-size-adjust: 100%; }
 }
 .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .table-wrap .table { min-width: 100%; }
+
+/* Nada puede ser más ancho que su contenedor (evita el scroll horizontal de la página) */
+.grid > *, .flex > * { min-width: 0; }
+.card { min-width: 0; max-width: 100%; }
+img, svg, video { max-width: 100%; height: auto; }
+/* Campos de hora/fecha en iOS: Safari les da un ancho intrínseco; se fuerza a ocupar su columna */
+input[type="time"].input, input[type="date"].input, input[type="number"].input {
+  -webkit-appearance: none; appearance: none; width: 100%; min-width: 0; max-width: 100%; display: block;
+}
+input[type="time"].input::-webkit-date-and-time-value, input[type="date"].input::-webkit-date-and-time-value { text-align: left; min-height: 1.5em; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
 .panel-navy { background: radial-gradient(120% 80% at 10% 0%, #12304a 0%, var(--ink) 55%, #071626 100%); }
 /* En la plantilla clara los paneles oscuros pasan a blanco con texto negro */
