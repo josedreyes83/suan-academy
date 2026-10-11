@@ -8,9 +8,10 @@ import { agregarClasesPlantilla } from "@/application/horarios";
 import { plantillaRepo } from "@/infrastructure/supabase/repos";
 
 const RUTA = "/admin/horarios";
-function volver(ok?: string, error?: string) {
+const RUTA_PUBLICADAS = "/admin/horarios/publicadas";
+function volver(ok?: string, error?: string, ruta: string = RUTA) {
   const q = error ? `?error=${encodeURIComponent(error)}` : ok ? `?ok=${encodeURIComponent(ok)}` : "";
-  redirect(RUTA + q);
+  redirect(ruta + q);
 }
 
 /** Agrega una clase a la plantilla semanal en uno o varios días (se repite cada semana al publicar). */
@@ -60,15 +61,15 @@ export async function publicarSemana(formData: FormData) {
   await requireRol("administrador");
   const supabase = await createClient();
   const lunes = String(formData.get("lunes") ?? "");
-  if (!lunes) volver(undefined, "Escoge el lunes de la semana a publicar.");
+  if (!lunes) volver(undefined, "Escoge el lunes de la semana a publicar.", RUTA_PUBLICADAS);
   const { data, error } = await supabase.rpc("publicar_semana", { p_lunes: lunes });
-  if (error) volver(undefined, error.message);
+  if (error) volver(undefined, error.message, RUTA_PUBLICADAS);
   const r = (data ?? {}) as { creados?: number; omitidos?: number; errores?: { fecha: string; cancha: string; hora: string; motivo: string }[] };
   const errs = r.errores ?? [];
   let msg = `Semana del ${lunes} publicada: ${r.creados ?? 0} clases creadas, ${r.omitidos ?? 0} ya existían.`;
   if (errs.length) msg += ` ${errs.length} no se pudieron crear: ` + errs.slice(0, 3).map((e) => `${e.fecha} ${e.hora.slice(0, 5)} ${e.cancha} (${e.motivo})`).join("; ") + (errs.length > 3 ? "…" : "");
-  revalidatePath(RUTA); revalidatePath("/alumno"); revalidatePath("/alumno/clases");
-  volver(msg, errs.length && !r.creados ? msg : undefined);
+  revalidatePath(RUTA_PUBLICADAS); revalidatePath(RUTA); revalidatePath("/alumno"); revalidatePath("/alumno/clases");
+  volver(msg, errs.length && !r.creados ? msg : undefined, RUTA_PUBLICADAS);
 }
 
 /** Cancela una clase ya publicada (los inscritos pasan a cancelado_academia). */
@@ -78,7 +79,7 @@ export async function cancelarBloque(formData: FormData) {
   const id = String(formData.get("id"));
   const motivo = String(formData.get("motivo") ?? "").trim() || "Cancelada por la academia";
   const { error } = await supabase.from("bloques").update({ estado: "cancelado", motivo_cancelacion: motivo }).eq("id", id);
-  if (error) volver(undefined, error.message);
+  if (error) volver(undefined, error.message, RUTA_PUBLICADAS);
   // Devuelve la sesión a quienes la tenían descontada (paquete personalizado)
   const { data: afectadas } = await supabase.from("inscripciones").select("id, pago_id, sesion_descontada").eq("bloque_id", id).eq("estado", "inscrito");
   for (const i of afectadas ?? []) {
@@ -88,6 +89,6 @@ export async function cancelarBloque(formData: FormData) {
     }
   }
   await supabase.from("inscripciones").update({ estado: "cancelado_academia", cancelado_en: new Date().toISOString(), motivo, sesion_descontada: false }).eq("bloque_id", id).eq("estado", "inscrito");
-  revalidatePath(RUTA); revalidatePath("/alumno"); revalidatePath("/alumno/clases");
-  volver("Clase cancelada. Los alumnos inscritos la verán como cancelada por la academia.");
+  revalidatePath(RUTA_PUBLICADAS); revalidatePath(RUTA); revalidatePath("/alumno"); revalidatePath("/alumno/clases");
+  volver("Clase cancelada. Los alumnos inscritos la verán como cancelada por la academia.", undefined, RUTA_PUBLICADAS);
 }

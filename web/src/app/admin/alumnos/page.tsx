@@ -127,7 +127,7 @@ export default async function AlumnosPage({ searchParams }: { searchParams: Prom
                     </div>
                   )}
                   {a.estado_registro === "pendiente" && (
-                    <div className="text-sm text-muted self-start">Este registro está pendiente: actívalo desde <Link className="underline" href="/admin/registro">Registro de alumnos</Link>.</div>
+                    <div className="text-sm text-muted self-start">Este registro está pendiente: actívalo desde <Link className="underline" href="/admin/alumnos/pendientes">Pendientes de aprobación</Link>.</div>
                   )}
                 </div>
               </details>

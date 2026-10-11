@@ -8,9 +8,10 @@ import { alumnosRepo } from "@/infrastructure/supabase/repos";
 import { requireRol } from "@/infrastructure/sesion";
 
 const RUTA = "/admin/registro";
-function volver(ok?: string, error?: string) {
+const RUTA_PENDIENTES = "/admin/alumnos/pendientes";
+function volver(ok?: string, error?: string, ruta: string = RUTA) {
   const q = error ? `?error=${encodeURIComponent(error)}` : ok ? `?ok=${encodeURIComponent(ok)}` : "";
-  redirect(RUTA + q);
+  redirect(ruta + q);
 }
 
 export async function cambiarRegistroHabilitado(formData: FormData) {
@@ -61,10 +62,10 @@ export async function aprobarAlumno(formData: FormData) {
     nivelId: Number(formData.get("nivel_id")),
     tipoAlumnoId: Number(formData.get("tipo_alumno_id")),
   }, sesion.userId);
-  if (!r.ok) { volver(undefined, r.error); return; }
+  if (!r.ok) { volver(undefined, r.error, RUTA_PENDIENTES); return; }
   const a = r.valor;
-  revalidatePath(RUTA); revalidatePath("/admin");
-  volver(`${a.nombre} activado. Acceso: usuario ${a.correo} · clave ${a.clave} (su número de documento). Compártelo por WhatsApp al ${a.celular}; al entrar verá las clases de su nivel.`);
+  revalidatePath(RUTA_PENDIENTES); revalidatePath("/admin/alumnos"); revalidatePath("/admin");
+  volver(`${a.nombre} activado. Acceso: usuario ${a.correo} · clave ${a.clave} (su número de documento). Compártelo por WhatsApp al ${a.celular}; al entrar verá las clases de su nivel.`, undefined, RUTA_PENDIENTES);
 }
 
 export async function rechazarAlumno(formData: FormData) {
@@ -72,9 +73,9 @@ export async function rechazarAlumno(formData: FormData) {
   const supabase = await createClient();
   const id = String(formData.get("id"));
   const motivo = String(formData.get("motivo") ?? "").trim();
-  if (!motivo) volver(undefined, "Escribe el motivo del rechazo.");
+  if (!motivo) volver(undefined, "Escribe el motivo del rechazo.", RUTA_PENDIENTES);
   const { error } = await supabase.from("alumnos").update({ estado_registro: "rechazado", motivo_rechazo: motivo }).eq("id", id).eq("estado_registro", "pendiente");
-  if (error) volver(undefined, error.message);
-  revalidatePath(RUTA); revalidatePath("/admin");
-  volver("Registro rechazado; queda en el historial.");
+  if (error) volver(undefined, error.message, RUTA_PENDIENTES);
+  revalidatePath(RUTA_PENDIENTES); revalidatePath("/admin/alumnos"); revalidatePath("/admin");
+  volver("Registro rechazado; queda en el historial.", undefined, RUTA_PENDIENTES);
 }
