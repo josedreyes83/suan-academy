@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { DiasSelector } from "./DiasSelector";
 import { PageHeader, Aviso, Vacio, DIAS } from "@/components/ui";
 import { crearPlantilla, cambiarEstadoPlantilla, eliminarPlantilla, publicarSemana, cancelarBloque } from "./actions";
 
@@ -69,10 +70,7 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
           <label className="label" htmlFor="cancha_id">Cancha</label>
           <select id="cancha_id" name="cancha_id" className="input" required>{C.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}</select>
         </div>
-        <div>
-          <label className="label" htmlFor="dia_semana">Día</label>
-          <select id="dia_semana" name="dia_semana" className="input" defaultValue={1}>{ORDEN_DIAS.map((d) => <option key={d} value={d}>{DIAS[d]}</option>)}</select>
-        </div>
+        <div className="sm:col-span-2 lg:col-span-4"><DiasSelector /></div>
         <div>
           <label className="label" htmlFor="hora_inicio">Hora de inicio</label>
           <input id="hora_inicio" name="hora_inicio" type="time" className="input" step={1800} defaultValue="07:00" required />

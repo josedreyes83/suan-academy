@@ -22,7 +22,7 @@ export async function crearPlantilla(formData: FormData) {
   await requireRol("administrador");
   const supabase = await createClient();
   const cancha_id = Number(formData.get("cancha_id"));
-  const dia_semana = Number(formData.get("dia_semana"));
+  const dias = formData.getAll("dias").map(Number).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
   const hora_inicio = String(formData.get("hora_inicio") ?? "");
   const duracion = Number(formData.get("duracion") || 60);
   const nivel_id = Number(formData.get("nivel_id"));
@@ -30,17 +30,31 @@ export async function crearPlantilla(formData: FormData) {
   const entrenador_id = String(formData.get("entrenador_id") ?? "");
   const cupo = Number(formData.get("cupo") || (tipo === "grupal" ? 4 : 1));
 
-  if (!cancha_id || !nivel_id || !entrenador_id || !hora_inicio) volver(undefined, "Completa cancha, día, hora, nivel y entrenador.");
+  if (!cancha_id || !nivel_id || !entrenador_id || !hora_inicio) volver(undefined, "Completa cancha, hora, nivel y entrenador.");
+  if (dias.length === 0) volver(undefined, "Marca al menos un día de la semana.");
   if (duracion < 30 || duracion > 240) volver(undefined, "La duración debe estar entre 30 y 240 minutos.");
   const hora_fin = sumarMinutos(hora_inicio, duracion);
 
-  const { error } = await supabase.from("plantilla_bloques").insert({ cancha_id, dia_semana, hora_inicio, hora_fin, nivel_id, tipo, entrenador_id, cupo, activo: true });
-  if (error) {
-    const msg = error.code === "23P01" ? "Ese horario se cruza con otro bloque de la misma cancha o del mismo entrenador." : error.message;
-    volver(undefined, msg);
+  // Una fila de plantilla por cada día marcado; los cruces se informan por día sin bloquear los demás
+  const ORDEN = [1, 2, 3, 4, 5, 6, 0];
+  const NOMBRE = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const creados: string[] = [];
+  const fallos: string[] = [];
+  for (const dia_semana of ORDEN.filter((d) => dias.includes(d))) {
+    const { error } = await supabase.from("plantilla_bloques").insert({ cancha_id, dia_semana, hora_inicio, hora_fin, nivel_id, tipo, entrenador_id, cupo, activo: true });
+    if (error) {
+      fallos.push(`${NOMBRE[dia_semana]}: ${error.code === "23P01" ? "se cruza con otra clase de la misma cancha o del mismo entrenador" : error.message}`);
+    } else {
+      creados.push(NOMBRE[dia_semana]);
+    }
   }
   revalidatePath(RUTA);
-  volver("Bloque agregado a la plantilla semanal. Recuerda publicar la semana para que los alumnos lo vean.");
+  const resumen = creados.length
+    ? `${creados.length} ${creados.length === 1 ? "clase agregada" : "clases agregadas"} a la plantilla (${creados.join(", ")}) a las ${hora_inicio}.`
+    : "No se agregó ninguna clase.";
+  if (fallos.length && !creados.length) volver(undefined, `${resumen} ${fallos.join(" · ")}`);
+  if (fallos.length) volver(`${resumen} No se pudieron crear → ${fallos.join(" · ")}`);
+  volver(`${resumen} Recuerda publicar la semana para que los alumnos las vean.`);
 }
 
 export async function cambiarEstadoPlantilla(formData: FormData) {
