@@ -52,11 +52,10 @@ export async function cambiarEstadoLink(formData: FormData) {
   volver(activo ? "Link reactivado." : "Link pausado.");
 }
 
-function claveTemporal() {
-  const letras = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-  let s = "";
-  for (let i = 0; i < 8; i++) s += letras[Math.floor(Math.random() * letras.length)];
-  return `Suan-${s}`;
+/** Clave inicial del alumno: su número de documento (Supabase exige mínimo 6 caracteres; si es más corto se completa con ceros a la izquierda). */
+function claveDesdeDocumento(doc: string) {
+  const limpio = doc.replace(/\s+/g, "");
+  return limpio.length >= 6 ? limpio : limpio.padStart(6, "0");
 }
 
 export async function aprobarAlumno(formData: FormData) {
@@ -75,13 +74,24 @@ export async function aprobarAlumno(formData: FormData) {
 
   // Usuario del alumno: correo propio o uno interno a partir del documento
   const correo = al!.correo?.trim().toLowerCase() || `${al!.numero_documento}@alumnos.suanacademy.co`;
-  const clave = claveTemporal();
+  const clave = claveDesdeDocumento(al!.numero_documento);
+  let perfilId: string | null = null;
   const { data: creado, error: eUser } = await admin!.auth.admin.createUser({
     email: correo, password: clave, email_confirm: true,
     user_metadata: { nombres: al!.nombres, apellidos: al!.apellidos, celular: al!.celular },
   });
-  if (eUser || !creado?.user) { volver(undefined, `No se pudo crear la cuenta: ${eUser?.message ?? "error desconocido"}`); return; }
-  const perfilId = creado.user.id;
+  if (creado?.user) {
+    perfilId = creado.user.id;
+  } else if (eUser && /already|registered|exists/i.test(eUser.message)) {
+    // Ya existe una cuenta con ese correo (p. ej. un acudiente o un registro anterior): se reutiliza y se fija la clave con el documento.
+    const { data: existente } = await admin!.from("perfiles").select("id").eq("correo", correo).maybeSingle();
+    if (!existente) { volver(undefined, `Ya existe una cuenta con el correo ${correo}, pero no se encontró su perfil. Revisa en Supabase → Authentication.`); return; }
+    perfilId = existente.id as string;
+    const { error: ePass } = await admin!.auth.admin.updateUserById(existente.id as string, { password: clave });
+    if (ePass) { volver(undefined, `No se pudo fijar la clave: ${ePass.message}`); return; }
+  } else {
+    volver(undefined, `No se pudo crear la cuenta: ${eUser?.message ?? "error desconocido"}`); return;
+  }
 
   await admin!.from("perfiles").upsert({ id: perfilId, nombres: al!.nombres, apellidos: al!.apellidos, correo, celular: al!.celular });
   await admin!.from("usuario_roles").upsert({ perfil_id: perfilId, rol: "alumno" });
@@ -91,7 +101,7 @@ export async function aprobarAlumno(formData: FormData) {
   if (eAl) volver(undefined, eAl.message);
 
   revalidatePath(RUTA); revalidatePath("/admin");
-  volver(`${al!.nombres} ${al!.apellidos} aprobado. Acceso: usuario ${correo} · contraseña temporal ${clave}. Compártelo por WhatsApp al ${al!.celular}.`);
+  volver(`${al!.nombres} ${al!.apellidos} activado. Acceso: usuario ${correo} · clave ${clave} (su número de documento). Compártelo por WhatsApp al ${al!.celular}; al entrar verá las clases de su nivel.`);
 }
 
 export async function rechazarAlumno(formData: FormData) {

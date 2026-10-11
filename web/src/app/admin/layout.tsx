@@ -13,6 +13,7 @@ export const NAV = [
   { href: "/admin/precios", label: "Precios" },
   { href: "/admin/entrenadores", label: "Entrenadores" },
   { href: "/admin/parametros", label: "Parámetros" },
+  { href: "/admin/horarios", label: "Horarios" },
   { href: "/admin/registro", label: "Registro de alumnos" },
 ];
 

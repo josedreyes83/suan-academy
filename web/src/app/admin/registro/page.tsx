@@ -41,7 +41,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
     <>
       <PageHeader
         title="Registro de alumnos"
-        subtitle="Habilita la sección de registro, comparte el link y aprueba los registros pendientes. Al aprobar, la app crea la cuenta del alumno y te muestra su acceso para enviarlo por WhatsApp."
+        subtitle="Habilita la sección de registro, comparte el link y activa los registros pendientes. Al activar, escoges el tipo de alumno y la app crea su cuenta: usuario = su correo (o documento@alumnos.suanacademy.co) y clave = su número de documento."
       />
       <Aviso ok={ok} error={error} />
 
@@ -102,7 +102,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
       {/* Pendientes */}
       <section>
         <div className="flex items-end justify-between mb-2">
-          <h2 className="text-sm font-bold text-ink">Registros pendientes ({P.length})</h2>
+          <h2 className="text-sm font-bold text-ink">Pendientes de aprobación ({P.length})</h2>
           <span className="text-xs text-muted">{aprobados ?? 0} aprobados · {rechazados ?? 0} rechazados</span>
         </div>
         {sinClave && <div className="mb-3 rounded-md border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">Para aprobar alumnos se necesita <code>SUPABASE_SERVICE_ROLE_KEY</code> en las variables del servidor.</div>}
@@ -121,6 +121,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
                   <div className="flex items-center gap-2 text-xs">
                     <span className="pill-off">{nombreNivel(a.nivel_id)}</span>
                     <span className="pill-off">{origen(a.link_id)}</span>
+                    <span className="pill bg-lime/30 text-ink">Pendiente de aprobación</span>
                     {a.parq_alerta ? <span className="pill bg-danger/15 text-danger">PAR-Q: {siSi.length} sí</span> : <span className="pill-ok">PAR-Q sin alertas</span>}
                   </div>
                 </summary>
@@ -142,7 +143,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
                       <input type="hidden" name="id" value={a.id} />
                       <div><label className="label">Nivel</label><select name="nivel_id" className="input" defaultValue={a.nivel_id ?? ""} required>{N.map((n) => <option key={n.id} value={n.id}>{n.nombre}</option>)}</select></div>
                       <div><label className="label">Tipo de alumno</label><select name="tipo_alumno_id" className="input" defaultValue={T.find((t) => t.codigo === "normal")?.id}>{T.map((t) => <option key={t.id} value={t.id}>{t.nombre}</option>)}</select></div>
-                      <button className="btn-primary" disabled={sinClave}>Aprobar</button>
+                      <button className="btn-primary" disabled={sinClave}>Activar</button>
                     </form>
                     <form action={rechazarAlumno} className="grid gap-3 sm:grid-cols-[1fr_auto] items-end">
                       <input type="hidden" name="id" value={a.id} />
