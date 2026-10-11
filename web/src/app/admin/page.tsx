@@ -44,10 +44,15 @@ export default async function AdminInicio() {
             <div className="text-sm text-muted">{p.detalle}</div>
           </Link>
         ))}
-        <Link href="/admin/registro" className="card bg-ink text-white border-ink hover:border-lime transition-colors">
+        <Link href="/admin/registro" className="card panel-navy text-white border-ink hover:border-lime transition-colors">
           <span className="text-xs font-bold tracking-widest text-teal">REGISTRO DE ALUMNOS</span>
-          <div className="text-lg font-extrabold mt-2">{alumnosOk.count ?? 0} aprobados</div>
-          <div className="text-sm text-neutral-300">{alumnosPend.count ?? 0} pendientes de aprobación</div>
+          <div className="text-lg font-extrabold mt-2">{alumnosPend.count ?? 0} pendientes de aprobación</div>
+          <div className="text-sm text-neutral-300">activa cada registro con su nivel y tipo</div>
+        </Link>
+        <Link href="/admin/alumnos" className="card panel-navy text-white border-ink hover:border-lime transition-colors">
+          <span className="text-xs font-bold tracking-widest text-teal">ALUMNOS</span>
+          <div className="text-lg font-extrabold mt-2">{alumnosOk.count ?? 0} activos</div>
+          <div className="text-sm text-neutral-300">ver, cambiar nivel/tipo, inactivar, restablecer clave</div>
         </Link>
       </div>
     </>

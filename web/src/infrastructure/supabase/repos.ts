@@ -1,6 +1,6 @@
 /** Repositorios Supabase: implementan los puertos de la capa de aplicación. */
 import { createClient, createAdminClient } from "./server";
-import type { AlumnosRepo, InscripcionesRepo, PlantillaRepo, RegistroRepo } from "@/application/puertos";
+import type { AlumnosRepo, GestionAlumnosRepo, InscripcionesRepo, PlantillaRepo, RegistroRepo } from "@/application/puertos";
 import type { SolicitudRegistro } from "@/domain/registro";
 
 export function registroRepo(): RegistroRepo {
@@ -90,6 +90,27 @@ export function inscripcionesRepo(): InscripcionesRepo {
       const supabase = await createClient();
       const { error } = await supabase.rpc("cancelar_inscripcion", { p_insc: inscripcionId });
       return error ? { error: { code: error.code, message: error.message } } : {};
+    },
+  };
+}
+
+export function gestionAlumnosRepo(): GestionAlumnosRepo {
+  return {
+    async actualizar(alumnoId, cambios) {
+      const supabase = await createClient(); // RLS: solo administrador
+      const { error } = await supabase.from("alumnos").update(cambios).eq("id", alumnoId).in("estado_registro", ["aprobado", "inactivo"]);
+      return error ? { error: { code: error.code, message: error.message } } : {};
+    },
+    async perfilDeAlumno(alumnoId) {
+      const supabase = await createClient();
+      const { data } = await supabase.from("alumnos").select("perfil_id, numero_documento, nombres, correo").eq("id", alumnoId).maybeSingle();
+      return data ?? null;
+    },
+    async fijarClave(perfilId, clave) {
+      const admin = createAdminClient();
+      if (!admin) return { error: "Falta SUPABASE_SERVICE_ROLE_KEY en el servidor." };
+      const { error } = await admin.auth.admin.updateUserById(perfilId, { password: clave });
+      return error ? { error: error.message } : {};
     },
   };
 }

@@ -34,3 +34,10 @@ export interface InscripcionesRepo {
   inscribir(bloqueId: string): Promise<{ error?: ErrorRepo }>;
   cancelar(inscripcionId: string): Promise<{ error?: ErrorRepo }>;
 }
+
+export interface GestionAlumnosRepo {
+  actualizar(alumnoId: string, cambios: { nivel_id?: number; tipo_alumno_id?: number; estado_registro?: "aprobado" | "inactivo" }): Promise<{ error?: ErrorRepo }>;
+  /** Vuelve a fijar la clave de acceso del alumno (perfil) a la indicada. */
+  fijarClave(perfilId: string, clave: string): Promise<{ error?: string }>;
+  perfilDeAlumno(alumnoId: string): Promise<{ perfil_id: string | null; numero_documento: string; nombres: string; correo: string | null } | null>;
+}

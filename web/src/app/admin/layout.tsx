@@ -17,6 +17,7 @@ export const NAV = [
   { href: "/admin/parametros", label: "Parámetros" },
   { href: "/admin/horarios", label: "Horarios" },
   { href: "/admin/registro", label: "Registro de alumnos" },
+  { href: "/admin/alumnos", label: "Alumnos" },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
