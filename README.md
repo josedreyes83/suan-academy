@@ -51,7 +51,7 @@ Cámbiala después del primer ingreso (Supabase → Authentication → Users, o 
 - `middleware.ts` refresca la sesión y protege `/admin`, `/entrenador`, `/alumno`.
 - `app/admin/*` una carpeta por pantalla: `page.tsx` (Server Component que lee de Supabase) + `actions.ts` (Server Actions que escriben y vuelven con `?ok=` o `?error=`).
 - `components/ui.tsx` encabezado de página, avisos, formato COP, días de la semana.
-- `app/globals.css` identidad SUAN (carbón `#15181b`, verde lima `#c6ff1a`) y clases `btn-*`, `input`, `card`, `table`, `pill-*`.
+- `app/globals.css` identidad SUAN (azul marino `#0a1f33`, verde lima `#c6ff1a` → verde `#6fd63a`, turquesa `#19b8a8`) y clases `btn-*`, `input`, `card`, `table`, `pill-*`.
 
 ## Reglas que ya viven en la base de datos
 

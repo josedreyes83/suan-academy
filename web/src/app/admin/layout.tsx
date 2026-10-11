@@ -19,11 +19,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const sesion = await requireRol("administrador");
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[240px_1fr]">
-      <aside className="bg-ink text-white lg:min-h-dvh flex flex-col border-l-8 border-lime">
-        <Link href="/admin" className="block px-5 py-5">
-          <LogoFull width={190} />
+      <aside className="panel-navy text-white lg:min-h-dvh flex flex-col border-l-8 border-lime">
+        <Link href="/admin" className="block px-4 pt-5 pb-3">
+          <LogoFull width={208} />
         </Link>
-        <div className="px-5 pb-3 text-[11px] uppercase tracking-widest text-neutral-400">Administración</div>
+        <div className="px-5 pb-3 text-[11px] uppercase tracking-widest text-teal">Administración</div>
         <NavLinks items={NAV} />
         <div className="mt-auto p-5 border-t border-white/10 text-sm">
           <div className="font-semibold">{sesion.nombres} {sesion.apellidos}</div>

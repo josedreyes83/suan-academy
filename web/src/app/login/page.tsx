@@ -9,8 +9,8 @@ export default async function LoginPage({
   const { next } = await searchParams;
   return (
     <main className="min-h-dvh grid lg:grid-cols-2">
-      <section className="bg-ink text-white p-8 sm:p-12 flex flex-col justify-between border-l-8 border-lime">
-        <LogoFull width={260} />
+      <section className="panel-navy text-white p-8 sm:p-12 flex flex-col justify-between border-l-8 border-lime">
+        <LogoFull width={300} />
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight max-w-md">
             La academia, organizada en un solo lugar.
@@ -20,7 +20,7 @@ export default async function LoginPage({
             visible para cada familia.
           </p>
         </div>
-        <p className="text-xs text-neutral-400">Versión 1 · 2026</p>
+        <p className="text-xs text-teal">Versión 1 · 2026</p>
       </section>
       <section className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-sm">

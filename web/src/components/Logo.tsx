@@ -7,7 +7,7 @@ export function LogoFull({ width = 220, className = "" }: { width?: number; clas
       src="/logo-suan.png"
       alt="SUAN Academy"
       width={width}
-      height={Math.round(width * 570 / 1470)}
+      height={Math.round(width * 383 / 1315)}
       priority
       className={className}
     />

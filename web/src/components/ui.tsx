@@ -5,7 +5,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
     <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-ink flex items-center gap-3">
-          <span className="inline-block w-2.5 h-7 bg-lime rounded-sm" aria-hidden="true" />
+          <span className="inline-block w-2.5 h-7 rounded-sm bg-gradient-to-b from-lime to-lime-dk" aria-hidden="true" />
           {title}
         </h1>
         {subtitle && <p className="text-muted text-sm mt-1 max-w-2xl">{subtitle}</p>}
