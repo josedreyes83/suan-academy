@@ -23,7 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const sesion = await requireRol("administrador");
   const tema = await temaActual();
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[240px_1fr]">
+    <div className="min-h-dvh w-full max-w-[100vw] overflow-x-clip lg:grid lg:grid-cols-[240px_minmax(0,1fr)]">
       <aside className="panel-navy text-white lg:min-h-dvh lg:sticky lg:top-0 lg:h-dvh flex flex-col border-l-4 lg:border-l-8 border-lime">
         <div className="flex items-center justify-between gap-3 px-4 pt-3 pb-2 lg:pt-5 lg:pb-3">
           <Link href="/admin" className="block">

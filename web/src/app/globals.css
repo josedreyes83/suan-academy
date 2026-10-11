@@ -49,6 +49,9 @@
 }
 
 html, body { height: 100%; -webkit-text-size-adjust: 100%; }
+/* Red de seguridad: la página nunca es más ancha que la pantalla (si no, iOS aleja el zoom) */
+html { overflow-x: hidden; }
+body { overflow-x: hidden; width: 100%; max-width: 100vw; position: relative; }
 /* Móvil: inputs a 16px para que iOS no haga zoom; celdas de tabla más compactas; scroll horizontal cómodo */
 @media (max-width: 640px) {
   .input, select.input, textarea.input { font-size: 16px; }
