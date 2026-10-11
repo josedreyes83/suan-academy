@@ -109,7 +109,7 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
           {ORDEN_DIAS.filter((d) => P.some((p) => p.dia_semana === d)).map((d) => (
             <div key={d} className="card">
               <div className="font-extrabold text-ink mb-2">{DIAS[d]}</div>
-              <table className="table">
+              <div className="table-wrap"><table className="table min-w-[560px]">
                 <thead><tr><th>Hora</th><th>Cancha</th><th>Nivel</th><th>Tipo</th><th>Entrenador</th><th>Cupo</th><th></th></tr></thead>
                 <tbody>
                   {P.filter((p) => p.dia_semana === d).map((p) => (
@@ -133,7 +133,7 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             </div>
           ))}
         </div>
@@ -147,7 +147,7 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
             <div className="text-lg font-extrabold">Crea las clases de una semana a partir de la plantilla</div>
             <p className="text-sm text-neutral-300 mt-1 max-w-xl">Se puede publicar varias veces: las clases que ya existan no se duplican. Las que caigan en franjas bloqueadas se omiten y se informan.</p>
           </div>
-          <form action={publicarSemana} className="flex items-end gap-3">
+          <form action={publicarSemana} className="flex flex-wrap items-end gap-3 w-full sm:w-auto">
             <div>
               <label className="label !text-neutral-300" htmlFor="lunes">Lunes de la semana</label>
               <input id="lunes" name="lunes" type="date" className="input" defaultValue={proximoLunes()} required />
@@ -174,7 +174,7 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
                 {fechas.map((f) => (
                   <div key={f} className="mb-3 last:mb-0">
                     <div className="text-xs font-bold uppercase tracking-widest text-muted mb-1">{fechaLarga(f)}</div>
-                    <table className="table">
+                    <div className="table-wrap"><table className="table min-w-[520px]">
                       <tbody>
                         {bs.filter((b) => b.fecha === f).map((b) => (
                           <tr key={b.id} className={b.estado === "cancelado" ? "opacity-50 line-through" : ""}>
@@ -196,7 +196,7 @@ export default async function HorariosPage({ searchParams }: { searchParams: Pro
                           </tr>
                         ))}
                       </tbody>
-                    </table>
+                    </table></div>
                   </div>
                 ))}
               </div>

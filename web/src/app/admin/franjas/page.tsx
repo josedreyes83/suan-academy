@@ -61,7 +61,7 @@ export default async function FranjasPage({ searchParams }: { searchParams: Prom
         <div>
           <h2 className="text-sm font-bold text-ink mb-2">Recurrentes (cada semana)</h2>
           {recurrentes.length === 0 ? <Vacio texto="Sin bloqueos recurrentes." /> : (
-            <div className="card overflow-x-auto">
+            <div className="card table-wrap">
               <table className="table min-w-[420px]">
                 <thead><tr><th>Día</th><th>Hora</th><th>Cancha</th><th>Motivo</th><th></th></tr></thead>
                 <tbody>
@@ -74,7 +74,7 @@ export default async function FranjasPage({ searchParams }: { searchParams: Prom
         <div>
           <h2 className="text-sm font-bold text-ink mb-2">Puntuales (una fecha)</h2>
           {puntuales.length === 0 ? <Vacio texto="Sin bloqueos por fecha." /> : (
-            <div className="card overflow-x-auto">
+            <div className="card table-wrap">
               <table className="table min-w-[420px]">
                 <thead><tr><th>Fecha</th><th>Hora</th><th>Cancha</th><th>Motivo</th><th></th></tr></thead>
                 <tbody>

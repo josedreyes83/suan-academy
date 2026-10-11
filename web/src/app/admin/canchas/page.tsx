@@ -56,7 +56,7 @@ export default async function CanchasPage({ searchParams }: { searchParams: Prom
 
               <form action={guardarHorario} className="mt-4">
                 <input type="hidden" name="cancha_id" value={c.id} />
-                <div className="overflow-x-auto">
+                <div className="table-wrap">
                   <table className="table min-w-[460px]">
                     <thead>
                       <tr><th>Día</th><th>Abre</th><th>Desde</th><th>Hasta</th></tr>

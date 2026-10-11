@@ -19,11 +19,11 @@ export default async function AlumnoLayout({ children }: { children: React.React
   if (!sesion.roles.includes("alumno") && !sesion.roles.includes("acudiente")) redirect(inicioPorRol(sesion.roles));
   return (
     <div className="min-h-dvh flex flex-col">
-      <header className="panel-navy text-white border-b-4 border-lime">
+      <header className="panel-navy text-white border-b-4 border-lime sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between gap-4">
-          <Link href="/alumno"><LogoFull width={160} /></Link>
+          <Link href="/alumno"><LogoFull width={160} className="w-[130px] sm:w-[160px] h-auto" /></Link>
           <div className="text-right text-sm">
-            <div className="font-semibold">{sesion.nombres} {sesion.apellidos}</div>
+            <div className="font-semibold truncate max-w-[160px] sm:max-w-none">{sesion.nombres} {sesion.apellidos}</div>
             <div className="flex items-center justify-end gap-3">
               <ThemeToggle inicial={tema} compacto />
               <form action={cerrarSesion}><button className="text-xs text-neutral-300 underline hover:text-lime">Cerrar sesión</button></form>
@@ -32,7 +32,7 @@ export default async function AlumnoLayout({ children }: { children: React.React
         </div>
         <div className="max-w-3xl mx-auto px-1"><NavLinks items={NAV} /></div>
       </header>
-      <main className="max-w-3xl w-full mx-auto p-4 sm:p-6">{children}</main>
+      <main className="max-w-3xl w-full mx-auto p-4 sm:p-6 min-w-0">{children}</main>
     </div>
   );
 }

@@ -48,7 +48,15 @@
   --font-sans: "Barlow", "Helvetica Neue", Arial, sans-serif;
 }
 
-html, body { height: 100%; }
+html, body { height: 100%; -webkit-text-size-adjust: 100%; }
+/* Móvil: inputs a 16px para que iOS no haga zoom; celdas de tabla más compactas; scroll horizontal cómodo */
+@media (max-width: 640px) {
+  .input, select.input, textarea.input { font-size: 16px; }
+  .table th, .table td { padding-left: .5rem; padding-right: .5rem; }
+  .table-wrap { margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem; }
+}
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-wrap .table { min-width: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
 .panel-navy { background: radial-gradient(120% 80% at 10% 0%, #12304a 0%, var(--ink) 55%, #071626 100%); }
 /* En la plantilla clara los paneles oscuros pasan a blanco con texto negro */
@@ -71,7 +79,7 @@ body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
 /* Componentes base */
 @layer components {
   .btn, .btn-primary, .btn-dark, .btn-ghost, .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 sm:py-2 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-11 sm:min-h-0;
   }
   .btn-primary { @apply text-ink; background: linear-gradient(135deg, var(--lime) 0%, var(--lime-dk) 100%); }
   .btn-primary:hover { background: linear-gradient(135deg, #d4ff4d 0%, var(--green) 100%); }
@@ -82,6 +90,7 @@ body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
   .label { @apply block text-xs font-semibold uppercase tracking-wide text-muted mb-1; }
   .card { @apply rounded-lg border border-line bg-surface p-4 sm:p-5; }
   .table { @apply w-full text-sm; }
+  .table td, .table th { @apply whitespace-nowrap sm:whitespace-normal; }
   .table th { @apply bg-ink text-white text-left text-xs font-semibold px-3 py-2 first:rounded-l-md last:rounded-r-md; }
   .table th:first-child { box-shadow: inset 4px 0 0 var(--lime); }
   .table td { @apply px-3 py-2 border-b border-line align-top; }

@@ -60,7 +60,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
       {/* Links */}
       <section className="mb-8">
         <h2 className="text-sm font-bold text-ink mb-2">Links de registro</h2>
-        <div className="card overflow-x-auto mb-3">
+        <div className="card table-wrap mb-3">
           <table className="table min-w-[640px]">
             <thead><tr><th>Origen</th><th>Link</th><th>Nivel</th><th>Vence</th><th>Límite</th><th>Recibidos</th><th></th></tr></thead>
             <tbody>

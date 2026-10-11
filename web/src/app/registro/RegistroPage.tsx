@@ -14,10 +14,10 @@ export async function RegistroPage({ codigo }: { codigo: string }) {
 
   return (
     <main className="min-h-dvh">
-      <header className="panel-navy border-b-4 border-lime px-6 py-5">
+      <header className="panel-navy border-b-4 border-lime px-4 sm:px-6 py-4 sm:py-5">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-          <LogoFull width={180} />
-          <span className="text-xs text-teal uppercase tracking-widest">Registro de alumnos</span>
+          <LogoFull width={180} className="w-[140px] sm:w-[180px] h-auto" />
+          <span className="text-[11px] sm:text-xs text-teal uppercase tracking-widest text-right">Registro de alumnos</span>
         </div>
       </header>
       <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10">

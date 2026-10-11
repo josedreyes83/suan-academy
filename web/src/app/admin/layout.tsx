@@ -24,13 +24,20 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const tema = await temaActual();
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[240px_1fr]">
-      <aside className="panel-navy text-white lg:min-h-dvh flex flex-col border-l-8 border-lime">
-        <Link href="/admin" className="block px-4 pt-5 pb-3">
-          <LogoFull width={208} />
-        </Link>
-        <div className="px-5 pb-3 text-[11px] uppercase tracking-widest text-teal">Administración</div>
+      <aside className="panel-navy text-white lg:min-h-dvh lg:sticky lg:top-0 lg:h-dvh flex flex-col border-l-4 lg:border-l-8 border-lime">
+        <div className="flex items-center justify-between gap-3 px-4 pt-3 pb-2 lg:pt-5 lg:pb-3">
+          <Link href="/admin" className="block">
+            <LogoFull width={208} className="w-[150px] lg:w-[208px] h-auto" />
+          </Link>
+          {/* Móvil: acciones rápidas en la misma fila del logo */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <ThemeToggle inicial={tema} compacto />
+            <form action={cerrarSesion}><button className="text-xs text-neutral-300 underline hover:text-lime">Salir</button></form>
+          </div>
+        </div>
+        <div className="hidden lg:block px-5 pb-3 text-[11px] uppercase tracking-widest text-teal">Administración</div>
         <NavLinks items={NAV} />
-        <div className="mt-auto p-5 border-t border-white/10 text-sm">
+        <div className="hidden lg:block mt-auto p-5 border-t border-white/10 text-sm">
           <div className="font-semibold">{sesion.nombres} {sesion.apellidos}</div>
           <div className="text-neutral-400 text-xs truncate">{sesion.email}</div>
           <div className="mt-3"><ThemeToggle inicial={tema} /></div>
@@ -41,7 +48,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </form>
         </div>
       </aside>
-      <main className="p-4 sm:p-8 max-w-6xl w-full">{children}</main>
+      <main className="p-4 sm:p-6 lg:p-8 max-w-6xl w-full min-w-0 overflow-x-hidden">{children}</main>
     </div>
   );
 }

@@ -48,7 +48,7 @@ export default async function PreciosPage({ searchParams }: { searchParams: Prom
         </div>
       )}
 
-      <div className="card mb-6 overflow-x-auto">
+      <div className="card mb-6 table-wrap">
         <table className="table min-w-[560px]">
           <thead>
             <tr>
@@ -115,7 +115,7 @@ export default async function PreciosPage({ searchParams }: { searchParams: Prom
       {PR.length > 0 && (
         <details className="mt-6">
           <summary className="text-sm text-muted cursor-pointer">Historial de precios ({PR.length})</summary>
-          <div className="card mt-2 overflow-x-auto">
+          <div className="card mt-2 table-wrap">
             <table className="table min-w-[520px]">
               <thead><tr><th>Producto</th><th>Tipo</th><th>Nivel</th><th>Valor</th><th>Vigente desde</th></tr></thead>
               <tbody>
