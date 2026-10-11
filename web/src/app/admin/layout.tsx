@@ -3,6 +3,8 @@ import { requireRol } from "@/lib/auth";
 import { LogoFull } from "@/components/Logo";
 import { cerrarSesion } from "./actions";
 import { NavLinks } from "./NavLinks";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { temaActual } from "@/lib/tema";
 
 export const NAV = [
   { href: "/admin", label: "Inicio" },
@@ -19,6 +21,7 @@ export const NAV = [
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const sesion = await requireRol("administrador");
+  const tema = await temaActual();
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[240px_1fr]">
       <aside className="panel-navy text-white lg:min-h-dvh flex flex-col border-l-8 border-lime">
@@ -30,6 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="mt-auto p-5 border-t border-white/10 text-sm">
           <div className="font-semibold">{sesion.nombres} {sesion.apellidos}</div>
           <div className="text-neutral-400 text-xs truncate">{sesion.email}</div>
+          <div className="mt-3"><ThemeToggle inicial={tema} /></div>
           <form action={cerrarSesion} className="mt-3">
             <button className="btn-ghost w-full !bg-transparent !text-white !border-white/20 hover:!bg-white/10">
               Cerrar sesión

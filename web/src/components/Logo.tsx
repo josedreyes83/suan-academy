@@ -1,16 +1,12 @@
 import Image from "next/image";
 
-/** Logo completo (corredor + SUAN ACADEMY). Va sobre fondo oscuro. */
+/** Logo completo (corredor + SUAN ACADEMY). Cambia de imagen según la plantilla de color (data-theme). */
 export function LogoFull({ width = 220, className = "" }: { width?: number; className?: string }) {
   return (
-    <Image
-      src="/logo-suan.png"
-      alt="SUAN Academy"
-      width={width}
-      height={Math.round(width * 383 / 1315)}
-      priority
-      className={className}
-    />
+    <>
+      <Image src="/logo-suan.png" alt="SUAN Academy" width={width} height={Math.round(width * 383 / 1315)} priority className={`logo-oscuro ${className}`} />
+      <Image src="/logo-suan-claro.png" alt="SUAN Academy" width={width} height={Math.round(width * 900 / 1600)} priority className={`logo-claro ${className}`} />
+    </>
   );
 }
 

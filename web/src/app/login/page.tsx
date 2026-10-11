@@ -1,5 +1,7 @@
 import { LogoFull } from "@/components/Logo";
 import { LoginForm } from "./LoginForm";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { temaActual } from "@/lib/tema";
 
 export default async function LoginPage({
   searchParams,
@@ -7,10 +9,14 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
+  const tema = await temaActual();
   return (
     <main className="min-h-dvh grid lg:grid-cols-2">
       <section className="panel-navy text-white p-8 sm:p-12 flex flex-col justify-between border-l-8 border-lime">
-        <LogoFull width={300} />
+        <div className="flex items-start justify-between gap-4">
+          <LogoFull width={300} />
+          <ThemeToggle inicial={tema} />
+        </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-teal mb-4">SUAN Academy</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold leading-[1.05] tracking-tight max-w-lg">

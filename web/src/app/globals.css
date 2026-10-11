@@ -16,6 +16,21 @@
   --ok: #2e8b57;
 }
 
+/* Plantilla clara: paleta del logo sobre fondo blanco (verde brillante + cian + negro) */
+:root[data-theme="claro"] {
+  --ink: #0b0b0b;
+  --ink-2: #262626;
+  --lime: #7ed321;
+  --lime-dk: #3cc26b;
+  --green: #2fb24a;
+  --teal: #17b7d6;
+  --bg: #f6f9fb;
+  --surface: #ffffff;
+  --fg: #0b0b0b;
+  --muted: #5f6b76;
+  --line: #dde5ec;
+}
+
 @theme inline {
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
@@ -36,6 +51,22 @@
 html, body { height: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
 .panel-navy { background: radial-gradient(120% 80% at 10% 0%, #12304a 0%, var(--ink) 55%, #071626 100%); }
+/* En la plantilla clara los paneles oscuros pasan a blanco con texto negro */
+:root[data-theme="claro"] .panel-navy { background: radial-gradient(120% 80% at 10% 0%, #ffffff 0%, #f6f9fb 60%, #e9f0f5 100%); color: var(--fg); }
+:root[data-theme="claro"] .panel-navy .text-white,
+:root[data-theme="claro"] .panel-navy.text-white { color: var(--fg); }
+:root[data-theme="claro"] .panel-navy .text-neutral-100,
+:root[data-theme="claro"] .panel-navy .text-neutral-300,
+:root[data-theme="claro"] .panel-navy .text-neutral-400 { color: var(--muted); }
+:root[data-theme="claro"] .panel-navy .border-white\/10,
+:root[data-theme="claro"] .panel-navy .\!border-white\/20 { border-color: var(--line) !important; }
+:root[data-theme="claro"] .panel-navy .hover\:bg-white\/10:hover,
+:root[data-theme="claro"] .panel-navy .hover\:\!bg-white\/10:hover { background-color: rgba(0,0,0,.05) !important; }
+:root[data-theme="claro"] .panel-navy .\!text-white { color: var(--fg) !important; }
+/* Logo: una imagen por plantilla */
+.logo-claro { display: none; }
+:root[data-theme="claro"] .logo-claro { display: block; }
+:root[data-theme="claro"] .logo-oscuro { display: none; }
 
 /* Componentes base */
 @layer components {

@@ -4,6 +4,8 @@ import { getSesion, inicioPorRol } from "@/lib/auth";
 import { LogoFull } from "@/components/Logo";
 import { cerrarSesion } from "../admin/actions";
 import { NavLinks } from "../admin/NavLinks";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { temaActual } from "@/lib/tema";
 
 const NAV = [
   { href: "/alumno", label: "Mis clases" },
@@ -13,6 +15,7 @@ const NAV = [
 export default async function AlumnoLayout({ children }: { children: React.ReactNode }) {
   const sesion = await getSesion();
   if (!sesion) redirect("/login");
+  const tema = await temaActual();
   if (!sesion.roles.includes("alumno") && !sesion.roles.includes("acudiente")) redirect(inicioPorRol(sesion.roles));
   return (
     <div className="min-h-dvh flex flex-col">
@@ -21,7 +24,10 @@ export default async function AlumnoLayout({ children }: { children: React.React
           <Link href="/alumno"><LogoFull width={160} /></Link>
           <div className="text-right text-sm">
             <div className="font-semibold">{sesion.nombres} {sesion.apellidos}</div>
-            <form action={cerrarSesion}><button className="text-xs text-neutral-300 underline hover:text-lime">Cerrar sesión</button></form>
+            <div className="flex items-center justify-end gap-3">
+              <ThemeToggle inicial={tema} compacto />
+              <form action={cerrarSesion}><button className="text-xs text-neutral-300 underline hover:text-lime">Cerrar sesión</button></form>
+            </div>
           </div>
         </div>
         <div className="max-w-3xl mx-auto px-1"><NavLinks items={NAV} /></div>
