@@ -75,4 +75,4 @@ Cámbiala después del primer ingreso (Supabase → Authentication → Users, o 
 
 ## Arquitectura y seguridad
 
-Ver [ARCHITECTURE.md](ARCHITECTURE.md): capas `domain / application / infrastructure / app`, reglas de trabajo y modelo de seguridad de links y datos. La migración `supabase/migrations/0007_endurecer_acceso_publico.sql` cierra el acceso anónimo a tablas y debe estar aplicada en producción.
+Ver [ARCHITECTURE.md](ARCHITECTURE.md): capas `domain / application / infrastructure / app`, reglas de trabajo y modelo de seguridad de links y datos. La migración `supabase/migrations/0007_endurecer_acceso_publico.sql` cierra el acceso anónimo a tablas (aplicada en producción el 2026-10-11).

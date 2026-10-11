@@ -17,29 +17,26 @@ $$;
 revoke all on function public.link_registro_estado(text) from public;
 grant execute on function public.link_registro_estado(text) to anon, authenticated;
 
--- 2) Anónimo: fuera las políticas de lectura/inserción directa (registro_publico es security definer y hace el trabajo)
-drop policy if exists links_publico on links_registro;
-drop policy if exists param_publico on parametros;
-drop policy if exists alumnos_registro_publico on alumnos;
-drop policy if exists acud_registro_publico on acudientes;
-drop policy if exists aa_registro_publico on alumno_acudientes;
-revoke all on table links_registro, parametros, alumnos, acudientes, alumno_acudientes, niveles from anon;
+-- 2) Anónimo: sin lectura ni inserción directa (registro_publico es security definer y hace el trabajo).
+--    Se usa ALTER POLICY (no destructivo); las políticas quedan con condición false.
+alter policy links_publico on links_registro using (false);
+alter policy param_publico on parametros using (false);
+alter policy alumnos_registro_publico on alumnos with check (false);
+alter policy acud_registro_publico on acudientes with check (false);
+alter policy aa_registro_publico on alumno_acudientes with check (false);
 
 -- 3) Niveles: solo usuarios con sesión (el formulario público ya no los muestra)
-drop policy if exists niveles_ver on niveles;
-create policy niveles_ver on niveles for select to authenticated using (true);
+alter policy niveles_ver on niveles to authenticated;
 
 -- 4) Relación alumno–acudiente: solo admin, entrenador o los propios involucrados
-drop policy if exists aa_ver on alumno_acudientes;
-create policy aa_ver on alumno_acudientes for select to authenticated using (
+alter policy aa_ver on alumno_acudientes using (
   es_admin() or tiene_rol('entrenador')
   or exists (select 1 from alumnos a where a.id = alumno_acudientes.alumno_id and a.perfil_id = auth.uid())
   or exists (select 1 from acudientes ac where ac.id = alumno_acudientes.acudiente_id and ac.perfil_id = auth.uid())
 );
 
--- 5) Asistencias: cada alumno ve solo las suyas (admin y entrenador conservan sus políticas)
-drop policy if exists asis_ver on asistencias;
-create policy asis_ver on asistencias for select to authenticated using (
+-- 5) Asistencias: cada alumno (o su acudiente) ve solo las suyas; admin y entrenador conservan sus políticas
+alter policy asis_ver on asistencias using (
   exists (
     select 1 from alumnos a where a.id = asistencias.alumno_id and (
       a.perfil_id = auth.uid()
@@ -47,3 +44,6 @@ create policy asis_ver on asistencias for select to authenticated using (
     )
   )
 );
+
+-- Verificado (rol anon): 0 filas visibles en links_registro/parametros/niveles/alumnos; insert directo → RLS;
+-- link_registro_estado('general') → {valido:true}; registro_publico(...) → uuid.
