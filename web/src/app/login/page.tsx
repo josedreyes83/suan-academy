@@ -1,4 +1,4 @@
-import { LogoIcon, Wordmark } from "@/components/Logo";
+import { LogoFull } from "@/components/Logo";
 import { LoginForm } from "./LoginForm";
 
 export default async function LoginPage({
@@ -10,10 +10,7 @@ export default async function LoginPage({
   return (
     <main className="min-h-dvh grid lg:grid-cols-2">
       <section className="bg-ink text-white p-8 sm:p-12 flex flex-col justify-between border-l-8 border-lime">
-        <div className="flex items-center gap-3">
-          <LogoIcon size={48} />
-          <Wordmark dark />
-        </div>
+        <LogoFull width={260} />
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight max-w-md">
             La academia, organizada en un solo lugar.

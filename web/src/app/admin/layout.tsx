@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireRol } from "@/lib/auth";
-import { LogoIcon, Wordmark } from "@/components/Logo";
+import { LogoFull } from "@/components/Logo";
 import { cerrarSesion } from "./actions";
 import { NavLinks } from "./NavLinks";
 
@@ -20,9 +20,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[240px_1fr]">
       <aside className="bg-ink text-white lg:min-h-dvh flex flex-col border-l-8 border-lime">
-        <Link href="/admin" className="flex items-center gap-3 px-5 py-5">
-          <LogoIcon size={36} />
-          <Wordmark dark />
+        <Link href="/admin" className="block px-5 py-5">
+          <LogoFull width={190} />
         </Link>
         <div className="px-5 pb-3 text-[11px] uppercase tracking-widest text-neutral-400">Administración</div>
         <NavLinks items={NAV} />
