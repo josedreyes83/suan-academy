@@ -35,7 +35,7 @@ export async function enviarRegistro(formData: FormData): Promise<ResultadoRegis
     p_codigo_link: codigo,
     p_nombres: g("nombres"), p_apellidos: g("apellidos"), p_fecha_nacimiento: fecha,
     p_tipo_documento: g("tipo_documento"), p_numero_documento: g("numero_documento"),
-    p_celular: g("celular"), p_correo: correo, p_nivel_id: g("nivel_id") ? Number(g("nivel_id")) : null,
+    p_celular: g("celular"), p_correo: correo, p_nivel_id: null,
     p_parq: parq, p_parq_observaciones: g("parq_observaciones"),
     p_acudiente: acudiente, p_acepta_datos: true, p_version_politica: VERSION_POLITICA,
   });

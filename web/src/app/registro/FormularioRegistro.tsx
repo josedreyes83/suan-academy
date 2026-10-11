@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { enviarRegistro } from "./actions";
 import { PARQ, TIPOS_DOCUMENTO, PARENTESCOS, AUTORIZACION_DATOS } from "@/lib/registro";
 
-type Nivel = { id: number; nombre: string; descripcion: string | null };
-
 function edadDe(fecha: string) {
   if (!fecha) return null;
   const d = new Date(fecha);
@@ -14,7 +12,7 @@ function edadDe(fecha: string) {
   return Math.floor((Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000));
 }
 
-export function FormularioRegistro({ codigo, niveles, nivelFijo }: { codigo: string; niveles: Nivel[]; nivelFijo: Nivel | null }) {
+export function FormularioRegistro({ codigo }: { codigo: string }) {
   const router = useRouter();
   const [fecha, setFecha] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -62,18 +60,6 @@ export function FormularioRegistro({ codigo, niveles, nivelFijo }: { codigo: str
             <label className="label" htmlFor="correo">Correo</label>
             <input id="correo" name="correo" type="email" className="input" autoComplete="email" required placeholder="tu@correo.com" />
             <p className="text-xs text-muted mt-1">Será tu usuario para entrar a la app.</p>
-          </div>
-          <div>
-            <label className="label" htmlFor="nivel_id">Nivel</label>
-            {nivelFijo ? (
-              <input className="input" value={nivelFijo.nombre} readOnly />
-            ) : (
-              <select id="nivel_id" name="nivel_id" className="input" required defaultValue="">
-                <option value="" disabled>Escoge tu nivel</option>
-                {niveles.map((n) => <option key={n.id} value={n.id}>{n.nombre}{n.descripcion ? ` — ${n.descripcion}` : ""}</option>)}
-              </select>
-            )}
-            <p className="text-xs text-muted mt-1">Si no estás seguro, escoge el más bajo; el entrenador lo confirma.</p>
           </div>
         </div>
       </section>

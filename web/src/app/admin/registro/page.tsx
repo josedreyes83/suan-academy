@@ -68,7 +68,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
                 <tr key={l.id} className={l.activo ? "" : "opacity-60"}>
                   <td className="font-medium">{l.nombre_origen}{!l.activo && <span className="pill-off ml-2">Pausado</span>}</td>
                   <td><CopiarLink ruta={`/registro/${l.codigo}`} /></td>
-                  <td>{l.nivel_id ? nombreNivel(l.nivel_id) : "El alumno escoge"}</td>
+                  <td>{l.nivel_id ? nombreNivel(l.nivel_id) : "Lo define el admin"}</td>
                   <td>{l.vence_en ?? "—"}</td>
                   <td>{l.limite ?? "—"}</td>
                   <td className="font-bold">{l.registros_recibidos}</td>
@@ -89,8 +89,8 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
             <div><label className="label" htmlFor="nombre_origen">Origen</label><input id="nombre_origen" name="nombre_origen" className="input" placeholder="Instagram octubre" required /></div>
             <div><label className="label" htmlFor="codigo">Código en la URL (opcional)</label><input id="codigo" name="codigo" className="input" placeholder="instagram-oct" /></div>
             <div>
-              <label className="label" htmlFor="nivel_id">Nivel fijo (opcional)</label>
-              <select id="nivel_id" name="nivel_id" className="input" defaultValue=""><option value="">El alumno escoge</option>{N.map((n) => <option key={n.id} value={n.id}>{n.nombre}</option>)}</select>
+              <label className="label" htmlFor="nivel_id">Nivel sugerido (opcional)</label>
+              <select id="nivel_id" name="nivel_id" className="input" defaultValue=""><option value="">Lo define el admin al activar</option>{N.map((n) => <option key={n.id} value={n.id}>{n.nombre}</option>)}</select>
             </div>
             <div><label className="label" htmlFor="vence_en">Vence (opcional)</label><input id="vence_en" name="vence_en" type="date" className="input" /></div>
             <div><label className="label" htmlFor="limite">Límite de registros (opcional)</label><input id="limite" name="limite" type="number" min={1} className="input" /></div>
@@ -119,7 +119,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
                     <span className="text-sm text-muted ml-2">{edad(a.fecha_nacimiento)} años · {a.tipo_documento} {a.numero_documento} · {a.celular}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="pill-off">{nombreNivel(a.nivel_id)}</span>
+                    {a.nivel_id && <span className="pill-off">Sugerido: {nombreNivel(a.nivel_id)}</span>}
                     <span className="pill-off">{origen(a.link_id)}</span>
                     <span className="pill bg-lime/30 text-ink">Pendiente de aprobación</span>
                     {a.parq_alerta ? <span className="pill bg-danger/15 text-danger">PAR-Q: {siSi.length} sí</span> : <span className="pill-ok">PAR-Q sin alertas</span>}
@@ -147,7 +147,7 @@ export default async function RegistroAdminPage({ searchParams }: { searchParams
                           <option value="" disabled>Escoge el nivel</option>
                           {N.map((n) => <option key={n.id} value={n.id}>{n.nombre}</option>)}
                         </select>
-                        {a.nivel_id && <p className="text-xs text-muted mt-1">El alumno escogió {nombreNivel(a.nivel_id)}; confírmalo o cámbialo.</p>}
+                        {a.nivel_id && <p className="text-xs text-muted mt-1">Nivel sugerido por el link: {nombreNivel(a.nivel_id)}; confírmalo o cámbialo.</p>}
                       </div>
                       <div>
                         <label className="label">Tipo de alumno <span className="text-danger">*</span></label>

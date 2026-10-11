@@ -2,20 +2,15 @@ import { createClient } from "@/lib/supabase/server";
 import { LogoFull } from "@/components/Logo";
 import { FormularioRegistro } from "./FormularioRegistro";
 
-type Nivel = { id: number; nombre: string; descripcion: string | null };
-
 /** Página de registro público, compartida por /registro y /registro/[codigo]. */
 export async function RegistroPage({ codigo }: { codigo: string }) {
   const supabase = await createClient();
-  const [{ data: param }, { data: link }, { data: niveles }] = await Promise.all([
+  const [{ data: param }, { data: link }] = await Promise.all([
     supabase.from("parametros").select("valor").eq("clave", "registro_habilitado").maybeSingle(),
-    supabase.from("links_registro").select("id, nombre_origen, nivel_id, activo, vence_en").eq("codigo", codigo).maybeSingle(),
-    supabase.from("niveles").select("id, nombre, descripcion").eq("activo", true).order("orden"),
+    supabase.from("links_registro").select("id, nombre_origen, activo, vence_en").eq("codigo", codigo).maybeSingle(),
   ]);
   const habilitado = param?.valor === "true";
   const linkValido = !!link && link.activo && (!link.vence_en || link.vence_en >= new Date().toISOString().slice(0, 10));
-  const N = (niveles ?? []) as Nivel[];
-  const nivelFijo = link?.nivel_id ? N.find((n) => n.id === link.nivel_id) ?? null : null;
 
   return (
     <main className="min-h-dvh">
@@ -36,8 +31,8 @@ export async function RegistroPage({ codigo }: { codigo: string }) {
         ) : (
           <>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-ink">Regístrate en SUAN Academy</h1>
-            <p className="text-muted mt-1 mb-6">Toma menos de 3 minutos. Cuando aprobemos tu registro, recibirás tu acceso por WhatsApp.</p>
-            <FormularioRegistro codigo={codigo} niveles={N} nivelFijo={nivelFijo} />
+            <p className="text-muted mt-1 mb-6">Toma menos de 3 minutos. Cuando aprobemos tu registro, el entrenador definirá tu nivel y recibirás tu acceso por WhatsApp.</p>
+            <FormularioRegistro codigo={codigo} />
           </>
         )}
       </div>
