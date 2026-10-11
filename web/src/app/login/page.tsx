@@ -12,13 +12,15 @@ export default async function LoginPage({
       <section className="panel-navy text-white p-8 sm:p-12 flex flex-col justify-between border-l-8 border-lime">
         <LogoFull width={300} />
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight max-w-md">
-            La academia, organizada en un solo lugar.
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-teal mb-4">SUAN Academy</p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold leading-[1.05] tracking-tight max-w-lg">
+            Entrena tu cuerpo,
+            <br />
+            <span className="text-lime">fortalece tus hábitos</span>
+            <br />
+            y avanza con confianza.
           </h1>
-          <p className="mt-4 text-neutral-300 max-w-md">
-            Horarios por cancha y nivel, registro de alumnos, pagos y vigencia, y la clase de hoy
-            visible para cada familia.
-          </p>
+          <div className="mt-6 h-1.5 w-24 rounded-full bg-lime" aria-hidden />
         </div>
         <p className="text-xs text-teal">Versión 1 · 2026</p>
       </section>
